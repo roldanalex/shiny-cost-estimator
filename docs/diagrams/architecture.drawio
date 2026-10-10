@@ -1,0 +1,139 @@
+<mxfile host="drawio-desktop" modified="2026-10-09T00:00:00.000Z" agent="Shiny Cost Estimator docs" version="24.0.0">
+  <diagram id="arch" name="Architecture">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1400" pageHeight="800" math="0" shadow="0" defaultFontFamily="Helvetica">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title and metadata -->
+        <mxCell id="title" value="Shiny Cost Estimator v2.1 — from code to a defensible estimate" style="text;html=1;align=left;verticalAlign=middle;fontSize=22;fontStyle=1;fontColor=#15202B;" vertex="1" parent="1">
+          <mxGeometry x="40" y="30" width="900" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="meta" value="Engine untouched since v2.0 (297 tests). One cost decomposition feeds every view. Last updated 09 Oct 2026 · Alexis Roldan" style="text;html=1;align=left;verticalAlign=middle;fontSize=13;fontColor=#566270;" vertex="1" parent="1">
+          <mxGeometry x="40" y="64" width="1000" height="24" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows (back layer) -->
+        <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#566270;strokeWidth=2;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="src" target="counter">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#566270;strokeWidth=2;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="counter" target="engine">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#566270;strokeWidth=2;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="params" target="engine">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0F4C5C;strokeWidth=2.5;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="engine" target="steps">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0F4C5C;strokeWidth=2;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="steps" target="ui">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a6" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0F4C5C;strokeWidth=2;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="steps" target="pdf">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a7" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#0F4C5C;strokeWidth=2;endArrow=blockThin;endFill=1;" edge="1" parent="1" source="steps" target="exports">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a8" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#566270;strokeWidth=2;endArrow=blockThin;endFill=1;dashed=1;" edge="1" parent="1" source="ui" target="scen">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a9" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#566270;strokeWidth=2;endArrow=blockThin;endFill=1;dashed=1;" edge="1" parent="1" source="exports" target="params">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1270" y="690"/>
+              <mxPoint x="220" y="690"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a9l" value="share link reopens the exact estimate" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=12;fontColor=#566270;" vertex="1" connectable="0" parent="a9">
+          <mxGeometry x="0.1" y="0" relative="1" as="geometry">
+            <mxPoint x="0" y="-16" as="offset"/>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Frame: inputs -->
+        <mxCell id="f_in" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F4F6;strokeColor=#D6DCE2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="360" height="520" as="geometry"/>
+        </mxCell>
+        <mxCell id="f_in_t" value="Inputs" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#15202B;" vertex="1" parent="1">
+          <mxGeometry x="70" y="140" width="300" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="src" value="&lt;b&gt;Where is the code?&lt;/b&gt;&lt;br&gt;Manual line counts · ZIP upload (50 MB) · Local folder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#566270;strokeWidth=1.5;fontSize=14;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="70" y="190" width="300" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="params" value="&lt;b&gt;Parameters (live)&lt;/b&gt;&lt;br&gt;Complexity · team experience · reuse · tooling&lt;br&gt;Cost per developer-year · team cap · schedule cap&lt;br&gt;Five COCOMO drivers as named levels&lt;br&gt;Maintenance rate and years" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#566270;strokeWidth=1.5;fontSize=14;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="70" y="310" width="300" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="in_note" value="Line counts and uploads need Run estimate. Every other input recalculates the result as it changes." style="text;html=1;align=left;verticalAlign=top;fontSize=12;fontColor=#566270;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="70" y="470" width="300" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Frame: engine -->
+        <mxCell id="f_en" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D7E8EC;strokeColor=#0F4C5C;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="460" y="120" width="420" height="520" as="geometry"/>
+        </mxCell>
+        <mxCell id="f_en_t" value="Engine (R/, synced to modules/)" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#0A3542;" vertex="1" parent="1">
+          <mxGeometry x="490" y="140" width="360" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="counter" value="&lt;b&gt;analyze_repo_code()&lt;/b&gt;&lt;br&gt;Detects languages, counts lines, weights productivity. Docs and config shown, never billed." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0F4C5C;strokeWidth=1.5;fontSize=14;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="490" y="190" width="360" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="engine" value="&lt;b&gt;estimate_shiny_cost()&lt;/b&gt;  COCOMO II.2000&lt;br&gt;Effort = 2.94 × KLOC^B × EM × 0.85&lt;br&gt;Schedule, team, caps, rush premium (≤ 2×),&lt;br&gt;coordination (+10% at 6+), ±30% range,&lt;br&gt;maintenance escalating 5%/yr, discounted TCO" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#0F4C5C;strokeWidth=1.5;fontSize=14;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="490" y="310" width="360" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="en_note" value="297 testthat assertions: golden values, invariants (effort = team × schedule), continuity at the cap, wage linearity, drift between R/ and modules/." style="text;html=1;align=left;verticalAlign=top;fontSize=12;fontColor=#0A3542;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="490" y="470" width="360" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Frame: one decomposition -->
+        <mxCell id="steps" value="&lt;b&gt;cost_steps()&lt;/b&gt;&lt;br&gt;One decomposition: base effort → each factor → premiums → estimate. Sums exactly to the headline.&lt;br&gt;fmt_usd(): rounded for display, engine exact." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F4C5C;strokeColor=#0A3542;strokeWidth=2;fontSize=14;fontColor=#FFFFFF;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="940" y="310" width="200" height="130" as="geometry"/>
+        </mxCell>
+
+        <!-- Frame: views -->
+        <mxCell id="f_out" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F2F4F6;strokeColor=#D6DCE2;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="1200" y="120" width="340" height="520" as="geometry"/>
+        </mxCell>
+        <mxCell id="f_out_t" value="Views (all read the same steps)" style="text;html=1;align=left;verticalAlign=middle;fontSize=16;fontStyle=1;fontColor=#15202B;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="140" width="300" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui" value="&lt;b&gt;Estimate page&lt;/b&gt;&lt;br&gt;Hero: figure · range from $0 · status word · tiles · scope&lt;br&gt;Sections: waterfall · deadline curve · ranked drivers · languages · sensitivity · ownership" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#566270;strokeWidth=1.5;fontSize=13;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="190" width="280" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="scen" value="&lt;b&gt;Scenarios&lt;/b&gt;&lt;br&gt;Up to 3 saved from the estimate, editable, aligned bars + table" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#566270;strokeWidth=1.5;fontSize=13;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="330" width="280" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="pdf" value="&lt;b&gt;PDF report&lt;/b&gt;  Quarto + Typst&lt;br&gt;Same tokens, fonts, steps and rounding" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#566270;strokeWidth=1.5;fontSize=13;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="420" width="280" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="exports" value="&lt;b&gt;Share link · CSV · JSON&lt;/b&gt;&lt;br&gt;Every input that moves the number, bounds-checked on the way back in" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#566270;strokeWidth=1.5;fontSize=13;align=left;spacingLeft=12;spacingRight=8;" vertex="1" parent="1">
+          <mxGeometry x="1230" y="500" width="280" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Legend -->
+        <mxCell id="leg1" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0F4C5C;strokeColor=#0A3542;" vertex="1" parent="1">
+          <mxGeometry x="40" y="730" width="22" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg1t" value="the one decomposition every view reads" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontColor=#566270;" vertex="1" parent="1">
+          <mxGeometry x="70" y="722" width="300" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#D7E8EC;strokeColor=#0F4C5C;" vertex="1" parent="1">
+          <mxGeometry x="380" y="730" width="22" height="14" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg2t" value="estimation engine, untouched by the UI redesign" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontColor=#566270;" vertex="1" parent="1">
+          <mxGeometry x="410" y="722" width="320" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="leg3" value="" style="endArrow=blockThin;endFill=1;html=1;strokeColor=#566270;strokeWidth=2;dashed=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="760" y="737" as="sourcePoint"/>
+            <mxPoint x="800" y="737" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="leg3t" value="user action (save as scenario, open a shared link)" style="text;html=1;align=left;verticalAlign=middle;fontSize=12;fontColor=#566270;" vertex="1" parent="1">
+          <mxGeometry x="810" y="722" width="340" height="30" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,861 @@
+{
+  "meta": {
+    "app": "Shiny Cost Estimator",
+    "what": "Cost, schedule, team and total cost of ownership for software projects · v2.2.0 · open source (MIT)",
+    "storage_key": "shiny-cost-estimator-onboarding",
+    "favicon": "assets/favicon.svg",
+    "brand": {
+      "org": "Alexis Roldan",
+      "logo_src": "assets/favicon.svg",
+      "powered_by": "Shiny Cost Estimator",
+      "powered_by_accent": "Estimator"
+    },
+    "theme": {
+      "accent": "#1C8CA3",
+      "secondary": "#B4500A",
+      "motif": "grid",
+      "motif_opacity": 0.08,
+      "glow_strength": 0.5,
+      "radius": "12px",
+      "font_family": "DM Sans"
+    },
+    "tagline": [
+      "One number.",
+      "An honest range.",
+      "A plan you can defend."
+    ],
+    "tagline_colors": [
+      "text",
+      "accent_soft",
+      "secondary_tint"
+    ],
+    "subtitle": "Describe a software project, or let the app count its code, and get the development cost, timeline, team size and total cost of ownership from the COCOMO II model, with a PDF you can forward. No technical background needed.",
+    "app_url": "https://alexis-roldan-ds.shinyapps.io/shiny-cost-estimator/",
+    "owner": "Alexis Roldan · independent data scientist",
+    "last_reviewed": "2026-10-09",
+    "authoritative_sources": [
+      "Boehm et al., Software Cost Estimation with COCOMO II (2000)",
+      "The app's methodology page (last page of every PDF report)",
+      "Project README on GitHub"
+    ],
+    "disclaimer": "Estimates are decision support, not quotes. The ±30% range reflects typical COCOMO II accuracy for uncalibrated projects; confirm scope and rates with your team before committing budget. This page is non-controlled.",
+    "est_minutes_guide": 10
+  },
+  "why": {
+    "scroll_hint": "See why",
+    "chapters": [
+      {
+        "id": "problem",
+        "kicker": "THE PROBLEM",
+        "nav_label": "The problem",
+        "headline": "The gut number nobody can defend.",
+        "intro": "Someone asks what an application would cost to build, or rebuild, or keep running. The answer is usually a round number from memory, a spreadsheet that drifts, or a generic calculator that has never heard of a codebase with R, Python and SQL in it.",
+        "blocks": [
+          {
+            "type": "principles",
+            "items": [
+              {
+                "title": "Spreadsheets drift",
+                "text": "Every copy has a different rate, a different premium for rush work, and no record of why."
+              },
+              {
+                "title": "A single figure hides the risk",
+                "text": "Software estimates are wide by nature. A number without a range invites a budget that is wrong on day one."
+              },
+              {
+                "title": "Deadlines are negotiated blind",
+                "text": "Nobody can say what a shorter timeline costs, or whether the team you have can meet it at all."
+              },
+              {
+                "title": "The reasoning is lost",
+                "text": "By the time the number reaches a decision, the assumptions behind it are gone."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "value",
+        "kicker": "WHAT YOU GET",
+        "nav_label": "What you get",
+        "headline": "A number, its range, and every assumption behind it.",
+        "intro": "The estimator runs the published COCOMO II model over your line counts and a handful of plain-language choices, then shows the result as a decision, not a dashboard.",
+        "blocks": [
+          {
+            "type": "stats",
+            "items": [
+              {
+                "label": "ESTIMATE RANGE",
+                "value": "±30%",
+                "unit": "around the figure",
+                "text": "the typical accuracy of this class of model, shown on every screen and in the PDF",
+                "source": "Boehm et al., Software Cost Estimation with COCOMO II (2000)"
+              },
+              {
+                "label": "RUSH PREMIUM",
+                "value": "up to 2×",
+                "unit": "cost",
+                "text": "what compressing the schedule below its natural length can add, growing smoothly instead of in steps",
+                "source": "Model: ratio^1.25 anchored to COCOMO II's SCED driver, capped at 2.0 (README, Methodology)"
+              },
+              {
+                "label": "TESTS",
+                "value": "297",
+                "unit": "assertions",
+                "text": "lock the engine, the formatting, the share link and the one cost decomposition every chart reads",
+                "source": "tests/testthat, v2.1.0, October 2026"
+              }
+            ]
+          },
+          {
+            "type": "lifecycle",
+            "items": [
+              {
+                "title": "Describe",
+                "text": "Type line counts, upload a ZIP, or point at a folder."
+              },
+              {
+                "title": "Run",
+                "text": "One click counts the code; everything else recalculates live."
+              },
+              {
+                "title": "Read",
+                "text": "Cost, range, status, schedule, team and ownership on one screen."
+              },
+              {
+                "title": "Adjust",
+                "text": "Move a deadline or a cap and watch the premium and feasibility change."
+              },
+              {
+                "title": "Share",
+                "text": "PDF report, a link that reopens the exact estimate, CSV or JSON."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "how",
+        "kicker": "HOW THE NUMBER IS BUILT",
+        "nav_label": "How it works",
+        "headline": "From lines of code to a budget, one factor at a time.",
+        "intro": "Every step is visible in the app's waterfall chart, and the steps always sum exactly to the headline figure.",
+        "blocks": [
+          {
+            "type": "capabilities",
+            "items": [
+              {
+                "category": "COUNT",
+                "badge": "docs never billed",
+                "title": "Count and weight the code",
+                "text": "Languages are detected and weighted for productivity. Documentation and configuration files are shown but never counted toward the cost."
+              },
+              {
+                "category": "MODEL",
+                "badge": "COCOMO II.2000",
+                "title": "Effort from size and complexity",
+                "text": "Effort grows faster than size: a high-complexity project of the same length costs more than a simple one."
+              },
+              {
+                "category": "PEOPLE",
+                "badge": "named rating levels",
+                "title": "Experience, reuse, tooling",
+                "text": "Plain-language choices such as 'Excellent tooling' or 'Very high reliability' map to the published multipliers."
+              },
+              {
+                "category": "LIMITS",
+                "badge": "caps and premiums",
+                "title": "Your team and your deadline",
+                "text": "A schedule cap shorter than the natural schedule adds a rush premium. A plan that needs more people than your team cap is flagged as not feasible."
+              },
+              {
+                "category": "MONEY",
+                "badge": "one rate",
+                "title": "Person-months to dollars",
+                "text": "Effort is priced at one fully loaded cost per developer-year. Doubling the rate doubles the estimate."
+              },
+              {
+                "category": "OWNERSHIP",
+                "badge": "today's dollars",
+                "title": "Keeping it running",
+                "text": "Maintenance is a share of the build cost each year, escalating 5%, shown nominal and discounted so the total cost of ownership is honest."
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "trust",
+        "kicker": "WHAT IT WILL NOT DO",
+        "nav_label": "Trust",
+        "headline": "It will not pretend to know more than it does.",
+        "intro": "The estimator is built so that a forwarded number never disagrees with itself and never looks more precise than it is.",
+        "blocks": [
+          {
+            "type": "layers",
+            "summary": [
+              "Rounded for display.",
+              "Infeasible plans say so.",
+              "Every view reads the same steps."
+            ],
+            "items": [
+              {
+                "kicker": "01 · THE MODEL",
+                "title": "Computes every figure",
+                "text": "The engine is published COCOMO II with documented calibration; 297 tests lock it.",
+                "bullets": [
+                  "Effort = team × schedule, always",
+                  "Waterfall sums to the headline",
+                  "No hidden constants"
+                ]
+              },
+              {
+                "kicker": "02 · THE RANGE",
+                "title": "Is shown everywhere",
+                "text": "±30% around the figure, drawn on a scale that starts at zero so you can see how wide it is.",
+                "bullets": [
+                  "Budget on the range, not the point",
+                  "Figures rounded to the nearest $1,000",
+                  "Called a range, never a confidence interval"
+                ]
+              },
+              {
+                "kicker": "03 · YOU",
+                "title": "Decide",
+                "text": "The app says 'not feasible with this team cap' and stops. Scope, rates and risk appetite stay with you.",
+                "bullets": [
+                  "Status in words, not colours",
+                  "Every assumption listed",
+                  "Methodology in every PDF"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "who",
+        "kicker": "WHO IT IS FOR",
+        "nav_label": "Who it is for",
+        "headline": "What this means for you.",
+        "intro": "Three people usually meet around the same estimate.",
+        "blocks": [
+          {
+            "type": "roles",
+            "items": [
+              {
+                "role": "Manager or sponsor",
+                "text": "A figure with its range and status you can put in a budget request, plus a PDF to attach."
+              },
+              {
+                "role": "Consultant",
+                "text": "A defensible quotation in minutes: run the client's repository, save two or three scenarios, forward the report."
+              },
+              {
+                "role": "Engineering lead",
+                "text": "A fast way to show what a deadline really costs, or why six people will not make it faster."
+              }
+            ]
+          },
+          {
+            "type": "image",
+            "src": "assets/estimate-light.png",
+            "alt": "The Estimate page: inputs on the left, the headline cost with its range and status on the right, and the cost waterfall below",
+            "caption": "The Estimate page. Inputs on the left; the headline block and the first two sections on the right."
+          }
+        ]
+      }
+    ],
+    "cta": {
+      "kicker": "BEFORE YOU BEGIN",
+      "headline": "Get your first estimate in two minutes.",
+      "intro": "The guide walks you from the worked example to a shared PDF, with a checkpoint at each step.",
+      "button": "Start the guide"
+    }
+  },
+  "guide": {
+    "title": "Guide",
+    "tree": [
+      {
+        "section": "welcome",
+        "label": "Start here"
+      },
+      {
+        "section": "first-estimate",
+        "label": "Your first estimate"
+      },
+      {
+        "label": "Reading the result",
+        "children": [
+          {
+            "section": "headline",
+            "label": "The headline block"
+          },
+          {
+            "section": "sections",
+            "label": "The sections"
+          }
+        ]
+      },
+      {
+        "section": "plan",
+        "label": "Choosing a plan"
+      },
+      {
+        "section": "inputs",
+        "label": "Tuning the inputs"
+      },
+      {
+        "section": "code-sources",
+        "label": "Bringing in real code",
+        "optional": true
+      },
+      {
+        "section": "scenarios",
+        "label": "What-if scenarios"
+      },
+      {
+        "section": "share",
+        "label": "Share and export"
+      }
+    ],
+    "practical_guides": [
+      {
+        "section": "meaning",
+        "label": "What the numbers mean"
+      },
+      {
+        "section": "faq",
+        "label": "Questions people ask"
+      }
+    ],
+    "sections": {
+      "welcome": {
+        "kicker": "START HERE",
+        "title": "Open the app and run the example",
+        "intro": "The estimator runs in the browser; nothing to install. The first screen shows a worked example you can run in one click, so you see a complete estimate before you type anything.",
+        "minutes": 1,
+        "chips": [
+          "No account",
+          "Light and dark mode",
+          "Keyboard friendly"
+        ],
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "title": "Open the app",
+                "text": "Use the link at the top of this page, or the Live App link in the project README. It works on a phone, but the charts are easier to read on a laptop."
+              },
+              {
+                "title": "Choose Run this example",
+                "text": "The example is 10,000 lines of R at medium complexity with a proficient team. The result appears on the right with every section filled."
+              },
+              {
+                "title": "Find the Help menu",
+                "text": "Top right: this guide, a short how-to, the parameter reference and the release notes. The sun/moon button switches light and dark mode."
+              }
+            ]
+          },
+          {
+            "type": "image",
+            "src": "assets/first-run-light.png",
+            "alt": "First-run screen with the worked example and the three ways to bring in code",
+            "caption": "The first screen: a worked example and the three ways to bring in code."
+          }
+        ],
+        "checkpoint": "I can open the app, run the example, and see the headline cost with its range."
+      },
+      "first-estimate": {
+        "kicker": "TWO MINUTES",
+        "title": "Describe your own project",
+        "intro": "A rough guess is fine. The point of the first pass is to see how the number moves when you change something, not to get it right the first time.",
+        "minutes": 2,
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "title": "Keep Manual selected under 'Where is the code?'",
+                "text": "Type roughly how many lines of code the project has, split by language. If you only know a total, put it all in one language."
+              },
+              {
+                "title": "Set the three inputs that matter most",
+                "text": "Complexity (when in doubt, Medium), Team experience (1 novice to 5 expert) and Cost per developer-year (the fully loaded yearly cost of one developer, salary plus benefits and overhead)."
+              },
+              {
+                "title": "Choose Run estimate",
+                "text": "The button at the bottom of the inputs counts the code and shows the result. On a phone, the inputs drawer closes so the result is what you see."
+              },
+              {
+                "title": "Move a slider",
+                "text": "Drag the Schedule cap to the left. The cost rises, the status line explains why, and you did not need to run anything again."
+              }
+            ]
+          },
+          {
+            "type": "required",
+            "title": "Only line counts and uploads need Run estimate.",
+            "text": "Every other input recalculates the estimate the moment it changes. The note under the headline figure reminds you of this."
+          },
+          {
+            "type": "note",
+            "html": "Changed your mind? <b>Reset</b> returns every parameter to its default, and a toast offers <b>Undo</b> for fifteen seconds."
+          }
+        ],
+        "checkpoint": "I have run an estimate for my own line counts and watched it change when I moved the schedule cap."
+      },
+      "headline": {
+        "kicker": "READING THE RESULT",
+        "title": "The headline block",
+        "intro": "Everything a budget conversation needs is in the first block: the figure, how sure the model is, whether the plan is feasible, and what the number rests on.",
+        "minutes": 2,
+        "aside": {
+          "kicker": "THE ONE RULE",
+          "title": "Budget on the range, not the point",
+          "text": "The low and high ends are equally plausible. Treat the figure as the middle of a band, and read the status line before you quote it."
+        },
+        "blocks": [
+          {
+            "type": "glance",
+            "title": "At a glance",
+            "items": [
+              {
+                "label": "The figure",
+                "text": "Estimated development cost, rounded to the nearest $1,000 so it never looks more precise than it is."
+              },
+              {
+                "label": "The range",
+                "text": "±30% drawn on a scale that starts at $0, so you can see how wide the uncertainty is."
+              },
+              {
+                "label": "The status line",
+                "text": "Within plan, Compressed schedule (with the premium), or Not feasible with this team cap."
+              },
+              {
+                "label": "The scope line",
+                "text": "Billable lines, complexity, team experience, rate and source: exactly what the number is based on."
+              }
+            ]
+          },
+          {
+            "type": "steps",
+            "items": [
+              {
+                "title": "Schedule tile",
+                "text": "The schedule against your cap, with the natural schedule the model would have chosen. A warning word appears when it is compressed or over the cap."
+              },
+              {
+                "title": "Team tile",
+                "text": "People in full-time equivalents against your team cap. 2.4 FTE means roughly two full-time developers plus one part-time."
+              },
+              {
+                "title": "Ownership tile",
+                "text": "Total cost of ownership in today's dollars: the build cost plus the maintenance years you chose. With maintenance off, the tile shows effort in person-months instead."
+              }
+            ]
+          },
+          {
+            "type": "image",
+            "src": "assets/sections-light.png",
+            "alt": "The Estimate page scrolled: ranked drivers, languages, sensitivity and ownership sections open",
+            "caption": "Below the headline block, each section answers one question."
+          }
+        ],
+        "checkpoint": "I can find the figure, its range, the status line and the scope line, and I know which tile shows total cost of ownership."
+      },
+      "sections": {
+        "kicker": "READING THE RESULT",
+        "title": "The sections, one question each",
+        "intro": "The first two sections are open. Click any heading to open the rest. Every chart card can be expanded to full screen, and a summary strip keeps the cost and a PDF button in reach while you scroll.",
+        "minutes": 3,
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "title": "How is the cost built?",
+                "text": "A waterfall from base effort through every factor to the final figure. The bars are labelled and sum exactly to the estimate."
+              },
+              {
+                "title": "What if the deadline moves?",
+                "text": "Cost at every schedule cap from 3 to 60 months. The diamond is your cap. Shaded caps are shorter than the natural schedule and carry a rush premium; hollow points would need more people than your team cap allows."
+              },
+              {
+                "title": "Which choices matter most?",
+                "text": "The same factors as the waterfall, ranked by dollars. Bars to the left save money; bars to the right add cost."
+              },
+              {
+                "title": "What is the code made of?",
+                "text": "Lines by language. Grey bars are documentation and configuration, which are never billed."
+              },
+              {
+                "title": "How sensitive is the estimate?",
+                "text": "Cost across team experience and complexity, with everything else held at your values. The diamond is your estimate."
+              },
+              {
+                "title": "What does it cost to keep running?",
+                "text": "Build cost, maintenance over the years you chose (nominal and in today's dollars), the total cost of ownership, and what it would be at other maintenance rates."
+              },
+              {
+                "title": "Assumptions and data",
+                "text": "Every input and result in a table, plus a plain-text report you can paste anywhere."
+              }
+            ]
+          },
+          {
+            "type": "note",
+            "html": "The waterfall, the ranked drivers, the text report, the CSV and the PDF all read the <b>same cost steps</b>. If two views ever disagreed, that would be a bug; it is tested."
+          }
+        ],
+        "checkpoint": "I know which section to open to see what a shorter deadline costs, and which one shows how the cost is built."
+      },
+      "inputs": {
+        "kicker": "TUNING",
+        "title": "Tuning the inputs",
+        "intro": "Each input has a question-mark button with a plain-language explanation. These are the ones that move the number most.",
+        "minutes": 3,
+        "blocks": [
+          {
+            "type": "tabs",
+            "label": "Choose a group",
+            "items": [
+              {
+                "label": "The project",
+                "blocks": [
+                  {
+                    "type": "steps",
+                    "items": [
+                      {
+                        "title": "Complexity",
+                        "text": "Low: one or two screens and simple logic. Medium: several interconnected features. High: complex architecture, AI parts, real-time data. Effort grows exponentially with size at higher complexity."
+                      },
+                      {
+                        "title": "Team experience",
+                        "text": "1 to 5. Four is the baseline (proficient). More experience lowers the estimate."
+                      },
+                      {
+                        "title": "Code reuse",
+                        "text": "How much existing code, packages or templates the team can lean on. More reuse, lower estimate."
+                      },
+                      {
+                        "title": "Tooling and process",
+                        "text": "From 'Excellent: IDE, version control, CI/CD, tests, review' to 'Poor: no version control'. Better tooling, lower estimate."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "label": "Money and limits",
+                "blocks": [
+                  {
+                    "type": "steps",
+                    "items": [
+                      {
+                        "title": "Cost per developer-year",
+                        "text": "The fully loaded annual cost of one developer. If you only know base salary, add roughly 25 to 40%. Doubling it doubles the estimate."
+                      },
+                      {
+                        "title": "Team cap",
+                        "text": "The most people on the project at once, up to 8. Six or more adds a 10% coordination premium. A smaller team means a longer schedule."
+                      },
+                      {
+                        "title": "Schedule cap",
+                        "text": "The longest the project may take. Tighter than the natural schedule adds a rush premium, up to double. If the cap would need more people than your team cap, the plan is flagged as not feasible."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "label": "Advanced drivers",
+                "blocks": [
+                  {
+                    "type": "text",
+                    "html": "Expand <b>Advanced COCOMO drivers</b> for five published cost drivers, each a named level: required reliability, product complexity, required reusability, team continuity and domain experience. <b>Nominal</b> means no effect; the badge next to the heading shows their combined multiplier."
+                  },
+                  {
+                    "type": "note",
+                    "html": "Leave these at nominal unless you know the project well. They are the difference between a quick estimate and a considered one, not between a wrong and a right one."
+                  }
+                ]
+              },
+              {
+                "label": "Maintenance",
+                "blocks": [
+                  {
+                    "type": "steps",
+                    "items": [
+                      {
+                        "title": "Annual maintenance rate",
+                        "text": "Yearly upkeep as a share of the build cost. 15 to 20% is typical; 25 to 30% for applications with frequent change requests or regulatory updates."
+                      },
+                      {
+                        "title": "Maintenance years",
+                        "text": "How many years to include in the total cost of ownership. Three to five is a typical planning horizon; 0 shows the build cost only."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "checkpoint": "I know which inputs move the number most, and where to find the explanation for each one."
+      },
+      "code-sources": {
+        "kicker": "REAL CODE",
+        "title": "Bringing in real code",
+        "intro": "When you do not know the line counts, let the app count them. Languages are detected automatically, and documentation or configuration files are shown but never billed.",
+        "minutes": 2,
+        "blocks": [
+          {
+            "type": "tabs",
+            "label": "Choose a source",
+            "items": [
+              {
+                "label": "ZIP upload",
+                "blocks": [
+                  {
+                    "type": "steps",
+                    "items": [
+                      {
+                        "title": "Zip the project folder",
+                        "text": "Leave out data files, build output and virtual environments so the archive stays under 50 MB."
+                      },
+                      {
+                        "title": "Choose ZIP and pick the file",
+                        "text": "The archive is extracted in an isolated temporary folder on the server, counted, and discarded."
+                      },
+                      {
+                        "title": "Run estimate",
+                        "text": "The progress shows elapsed time and the file being counted. The scope line will show how many documentation lines were excluded."
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "label": "Local folder",
+                "blocks": [
+                  {
+                    "type": "text",
+                    "html": "Only available when the app runs on your own computer (for example from RStudio with <code>shiny::runApp(\"cost-estimator-app\")</code>). Choose <b>Folder</b>, enter or browse to the repository path, and run."
+                  },
+                  {
+                    "type": "note",
+                    "html": "On the hosted version the Folder option is hidden; use ZIP instead."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "note",
+            "html": "If the archive contains no source code, the app says so and offers the worked example instead of showing an empty chart."
+          }
+        ],
+        "checkpoint": "I know how to get an estimate from a repository without counting lines by hand."
+      },
+      "scenarios": {
+        "kicker": "WHAT IF",
+        "title": "What-if scenarios",
+        "intro": "A budget conversation rarely ends with one number. Pin up to three versions of an estimate and compare them on the same scales.",
+        "minutes": 2,
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "title": "Save as scenario",
+                "text": "Under the headline block. The current estimate, including its language mix, advanced drivers and maintenance settings, is pinned to the Scenarios page."
+              },
+              {
+                "title": "Change something and save again",
+                "text": "A shorter deadline, a smaller team, a more experienced one. Up to three scenarios."
+              },
+              {
+                "title": "Open Scenarios",
+                "text": "Each scenario shows its cost, range, schedule, team and status, and an Inputs panel you can edit in place; the comparison updates as you type. One developer-year cost is shared so the dollars stay comparable."
+              },
+              {
+                "title": "Read the comparison",
+                "text": "Aligned bars for cost (with its range), schedule and team, and a side-by-side table with the cost difference against Scenario 1."
+              }
+            ]
+          },
+          {
+            "type": "image",
+            "src": "assets/scenarios-light.png",
+            "alt": "Scenarios page with two saved scenarios and a free third slot",
+            "caption": "Two scenarios: the same project at a 9-month cap and at a 24-month cap."
+          }
+        ],
+        "checkpoint": "I have saved two scenarios and can see the cost difference between them."
+      },
+      "share": {
+        "kicker": "SHARING",
+        "title": "Share and export",
+        "intro": "Every way out of the app carries the same numbers, rounded the same way.",
+        "minutes": 1,
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "title": "Download PDF report",
+                "text": "A five-page document: cover with the figure, range and status; the waterfall and ranked drivers; the deadline curve and ownership over time; every assumption; how the cost is built; methodology. Takes a few seconds; the progress shows elapsed time."
+              },
+              {
+                "title": "Copy link",
+                "text": "The address bar always holds a link that reopens this exact estimate. Repository scans are shared as their line counts."
+              },
+              {
+                "title": "CSV and JSON",
+                "text": "The language table, the cost steps and the results for spreadsheets or other tools."
+              }
+            ]
+          },
+          {
+            "type": "tools",
+            "items": [
+              {
+                "name": "PDF report",
+                "text": "What to attach to a budget request or send to a client"
+              },
+              {
+                "name": "Share link",
+                "text": "What to send a colleague who should see the same estimate and adjust it"
+              },
+              {
+                "name": "CSV / JSON",
+                "text": "What to feed into a spreadsheet or another tool"
+              }
+            ]
+          }
+        ],
+        "checkpoint": "I have downloaded a PDF and copied a link that reopens my estimate."
+      },
+      "meaning": {
+        "kicker": "HONEST FINE PRINT",
+        "title": "What the numbers mean",
+        "intro": "The estimator is deliberately conservative about what it claims. Knowing its limits makes the number more useful, not less.",
+        "minutes": 2,
+        "blocks": [
+          {
+            "type": "principles",
+            "items": [
+              {
+                "title": "The range is the estimate",
+                "text": "±30% reflects the typical accuracy of COCOMO II for projects that have not been calibrated against their own history. Budget on the range."
+              },
+              {
+                "title": "Rush work costs more",
+                "text": "Compressing the schedule below its natural length adds a premium that grows smoothly with the compression, up to double the cost."
+              },
+              {
+                "title": "People do not scale linearly",
+                "text": "Six or more people add coordination overhead, and the model never uses more than eight."
+              },
+              {
+                "title": "Documentation is free",
+                "text": "Only code that must be designed, written and tested drives cost. Docs and config files are listed for transparency but excluded."
+              },
+              {
+                "title": "Figures are rounded on purpose",
+                "text": "To the nearest $1,000 above $100,000, so a wide estimate never reads as dollar-accurate. The engine itself is exact."
+              },
+              {
+                "title": "Not feasible means not feasible",
+                "text": "When a deadline would need more people than your cap, the app says so instead of pretending the plan works."
+              }
+            ]
+          }
+        ],
+        "checkpoint": "I understand that the figure is the middle of a range and that the app flags plans it cannot stand behind."
+      },
+      "faq": {
+        "kicker": "QUESTIONS",
+        "title": "Questions people ask",
+        "intro": "Short answers to the questions that come up in the first week.",
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "title": "Why did the cost jump when I shortened the schedule?",
+                "text": "Compressed timelines need more parallel work, senior talent and overtime. The premium grows with the amount of compression, up to double."
+              },
+              {
+                "title": "Why is the team size 2.4 FTE?",
+                "text": "It is an average staffing level over the project: roughly two full-time developers plus one part-time."
+              },
+              {
+                "title": "Which cost per developer-year should I enter?",
+                "text": "The fully loaded annual cost: salary plus benefits and overhead. If you only know base salary, add roughly 25 to 40%."
+              },
+              {
+                "title": "Can I trust a single number?",
+                "text": "Use the range for budgeting, read the status line, and check the methodology page of the PDF for exactly how the figure is produced."
+              },
+              {
+                "title": "Does the app keep my code?",
+                "text": "Uploads are extracted in a temporary folder, counted and deleted. Only the line counts per language are kept for the estimate, and only for your session."
+              },
+              {
+                "title": "Where does the model come from?",
+                "text": "COCOMO II.2000 (Boehm et al.), with one documented calibration for modern frameworks. Constants and formulas are listed on the methodology page and in the README."
+              }
+            ]
+          }
+        ]
+      },
+      "plan": {
+        "kicker": "THE PLANNER",
+        "title": "Choosing a plan",
+        "intro": "You rarely know every input. The planner under the headline turns what you do know into exact plans, each one a real run of the model you can apply with one click.",
+        "minutes": 2,
+        "aside": {
+          "kicker": "WHY NO AI",
+          "title": "Every card is an engine call",
+          "text": "The model prices every team size against every deadline in a few milliseconds, so the advice is computed, not guessed. The text explains numbers it was handed."
+        },
+        "blocks": [
+          {
+            "type": "steps",
+            "items": [
+              {
+                "title": "Tell it what you know",
+                "text": "People available (1 to 8), a deadline in months, a budget in dollars. All optional; fill in one, two or none."
+              },
+              {
+                "title": "Read the advice",
+                "text": "A short paragraph leads with your facts: the fastest realistic delivery with your team, what one more person changes, whether the deadline can be met, whether the budget fits."
+              },
+              {
+                "title": "Pick a card",
+                "text": "Cheapest, fastest practical, with your team, for your deadline, within your budget. Each shows cost, months, FTE and the caps that produce it. Apply sets those caps in the sidebar; Save pins it as a scenario."
+              },
+              {
+                "title": "Read the staffing curve",
+                "text": "Months to deliver for one to eight people, with the cost on each point. The dotted line is the natural schedule with no rush; the shaded zone is where coordination overhead starts."
+              }
+            ]
+          },
+          {
+            "type": "required",
+            "title": "Nothing gets faster than 75% of the natural schedule.",
+            "text": "That is the limit COCOMO II treats as practical (Boehm's 'impossible region'). Plans below it are drawn on the curve but never recommended, and a deadline below it is reported as not achievable with the nearest date instead."
+          },
+          {
+            "type": "note",
+            "html": "When no plan fits the budget, the planner says how much of the scope would (in lines) and what one level better <b>code reuse</b> or <b>tooling</b> would save, each priced."
+          }
+        ],
+        "checkpoint": "I have entered my team size, read the advice, and applied a plan to the headline."
+      }
+    }
+  }
+}

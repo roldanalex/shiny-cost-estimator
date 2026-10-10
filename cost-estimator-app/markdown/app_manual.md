@@ -1,148 +1,123 @@
-This app answers one question: **what would it cost to build (or rebuild) a software application?** You describe the project — or upload its code — and the app estimates the development cost, timeline, and team size, with a PDF report you can share.
+This app answers one question: **what would it cost to build (or rebuild) a software application?** Describe the project, or let the app count its code, and you get the development cost, timeline, team size and total cost of ownership, with a PDF you can forward.
 
-No technical background is needed. Every parameter has a **?** button next to it with a plain-language explanation.
+No technical background is needed. Every input has a **?** next to it with a plain-language explanation.
 
 ---
 
-## The Four Tabs
+## The two pages
 
-| Tab | Use it to... |
+| Page | Use it to... |
 |---|---|
-| **Home** | See a live example estimate and jump into the tool |
-| **Analyze** | Produce an estimate for your project (start here) |
-| **Compare** | Put up to 3 what-if scenarios side by side |
-| **Export** | Download the PDF report, share a link, or export data |
+| **Estimate** | Produce an estimate for one project (start here) |
+| **Scenarios** | Pin up to three what-if versions of an estimate side by side |
+
+The **Help** menu in the top bar opens this guide, the parameter reference and the release notes. The sun/moon button switches between light and dark mode.
 
 ---
 
-## Get Your First Estimate (2 minutes)
+## Your first estimate (2 minutes)
 
-1. Open the **Analyze** tab.
-2. In the sidebar, keep **Manual Entry** selected.
-3. Enter roughly how many lines of code the project has, split by language
-   (for example — R: 15,000 · JavaScript: 3,000). A rough guess is fine;
-   you can refine later.
-4. Set the three parameters that matter most:
-   - **Complexity** — how architecturally involved the app is (when in doubt, Medium)
-   - **Team Experience** — average skill of the team, 1 (novice) to 5 (expert)
-   - **Average Annual Wage** — the fully-loaded yearly cost per developer
-5. Click **Run Analysis**.
+1. On the **Estimate** page, keep **Manual** selected under *Where is the code?*
+2. Enter roughly how many lines of code the project has, split by language (for example R: 15,000, JavaScript: 3,000). A rough guess is fine; you can refine later.
+3. Set the three inputs that matter most:
+   - **Complexity**: how architecturally involved the app is (when in doubt, Medium)
+   - **Team experience**: average skill of the team, 1 (novice) to 5 (expert)
+   - **Cost per developer-year**: the fully loaded yearly cost of one developer
+4. Choose **Run estimate**.
 
-The sidebar collapses and your results appear: the headline cost with its
-**estimate range (±30%)**, plus cards for schedule, team size, and effort.
+Or choose **Run this example** on the first screen to see a worked estimate immediately.
 
-> **Tip:** A summary strip stays pinned to the bottom of the screen with your
-> key numbers and a **PDF Report** button — it follows you as you explore.
+> **Live recalculation.** Line counts and uploads need *Run estimate*. Every other input (complexity, experience, reuse, caps, maintenance) updates the estimate the moment you change it. The note under the headline figure reminds you of this.
 
 ### Don't know your line counts?
 
-Let the app count them for you:
+Let the app count them:
 
-- **ZIP Upload** — zip the project folder and upload it (up to 50 MB).
-- **Local Folder** — if you're running the app on your own computer, point it
-  at the project directory.
+- **ZIP**: zip the project folder and upload it (up to 50 MB). Files are counted on the server and discarded.
+- **Folder** (only when the app runs on your own computer): point it at the project directory.
 
-The app detects each programming language automatically. Documentation and
-configuration files (README files, JSON, YAML, …) are shown in the results but
-**never counted toward the cost** — only real code is billed.
+Languages are detected automatically. Documentation and configuration files (README files, JSON, YAML, …) are shown in the results but **never counted toward the cost**. Only real code is billed.
 
----
+### Reset and undo
 
-## Reading Your Results
-
-The Analyze tab has four sub-tabs:
-
-### Results
-
-- **Code Distribution by Language** — what the project is made of. Greyed
-  boxes marked "not billed" are docs/config, excluded from cost.
-- **Cost Breakdown** — a waterfall showing how the estimate is built: base
-  effort, then each factor (experience, reuse, tools, …) adding or removing
-  cost, ending at exactly the headline number.
-- **What's Driving Your Cost?** — the same factors ranked by dollar impact.
-  Bars to the left save money; bars to the right add cost.
-- **Schedule vs. Cost Tradeoff** — what happens to cost if you demand a
-  faster (or allow a slower) delivery. Your current estimate is marked with a dot.
-
-### Details
-
-The full language table plus a plain-text summary of the estimate you can copy anywhere.
-
-### Sensitivity
-
-How the estimate would move if team experience or complexity were different.
-The diamond marker is your current estimate.
-
-### Maintenance & TCO
-
-Hidden until you set **Maintenance Years** above 0 in the sidebar. Shows the
-yearly cost of keeping the app alive and the **Total Cost of Ownership**
-(build + maintenance, discounted to today's dollars).
+**Reset** returns every parameter to its default. A toast offers **Undo** for 15 seconds if you change your mind.
 
 ---
 
-## What the Numbers Mean (Honest Fine Print)
+## Reading the result
 
-- **Estimate range (±30%)** — software estimation is inherently uncertain.
-  The range reflects the typical accuracy of this class of model
-  (COCOMO II); treat the low and high ends as equally plausible.
-- **Schedule warnings** — if you cap the schedule tighter than the work
-  naturally allows, the app adds a compression premium (rush work costs
-  more) and warns you. If the deadline would need more people than your team
-  cap allows, it flags the plan as **not feasible** rather than pretending.
-- **Consistency** — the numbers always agree with each other:
-  effort = team size × schedule, and the waterfall chart totals the headline
-  cost to the dollar.
+### The headline block
 
----
+- **Estimated development cost**, with its **estimate range (±30%)** drawn on a scale that starts at $0, so you can see how wide the uncertainty is.
+- A **status line**: *Within plan*, *Compressed schedule* (with the premium) or *Not feasible with this team cap*.
+- Three tiles: **Schedule** (against your cap and the natural schedule), **Team** (in full-time equivalents, against your cap) and **Total cost of ownership** (or effort when maintenance is off).
+- A **scope line** listing exactly what the number is based on.
 
-## Comparing Scenarios
+Under the block: **Download PDF report**, **Save as scenario**, **Copy link** (the address bar always holds a link that reopens this exact estimate), and **CSV / JSON** downloads.
 
-On the **Compare** tab:
+### What plan should I choose?
 
-1. Set the **shared cost parameters** (wage and max schedule) once — they
-   apply to every scenario so the dollar figures stay comparable.
-2. Fill in up to three scenario cards (e.g., "experienced team" vs "junior
-   team" vs "high complexity").
-3. Click **Calculate** on each card.
+The first section under the headline is a planner. Tell it what you already know, all optional:
 
-Results appear as three charts (cost with its range, schedule, team size) and
-a detail table.
+- **People available**: the fastest realistic delivery with that team, and what one more or one fewer person changes.
+- **Deadline (months)**: the smallest team that meets it and the rush premium it carries, or, if it cannot be met with up to eight people, the nearest achievable date.
+- **Budget (USD)**: whether the cheapest plan fits and the fastest plan within budget; if nothing fits, how much of the scope would, and which input (code reuse, tooling) would close the gap.
 
----
+With nothing filled in it still shows the **cheapest** plan, the **fastest practical** one, and a **staffing curve** (months to deliver for one to eight people, cost on each point). Every card has **Apply**, which sets the team and schedule caps in the sidebar so the headline becomes that plan, and **Save as scenario**. Plans shorter than 75% of the natural schedule are shown on the curve but never recommended: that is the limit COCOMO II treats as practical.
 
-## Sharing Your Estimate
+### The sections
 
-From the **Export** tab — or the **PDF Report** button in the summary strip:
+Each section is named for the question it answers. The first two are open; click a heading to open the rest.
 
-- **PDF Report** — a polished multi-page document with the headline estimate,
-  charts, every assumption you used, and a methodology page. Ready to email.
-  (Takes a few seconds to generate.)
-- **Shareable URL** — sends a colleague a link that pre-fills your Manual
-  Entry numbers so they see the same estimate.
-- **CSV / JSON** — raw data for spreadsheets or other tools.
+- **How is the cost built?** A waterfall from base effort through every factor to the final figure. The bars sum exactly to the estimate; each is labelled.
+- **What if the deadline moves?** Cost at every schedule cap. The diamond is your cap. Shaded caps are shorter than the natural schedule and carry a compression premium; hollow points would need more people than your team cap allows.
+- **Which choices matter most?** The same factors as the waterfall, ranked by dollars. Bars to the left save money, bars to the right add cost.
+- **What is the code made of?** Lines by language. Grey bars are documentation and configuration, which are never billed.
+- **How sensitive is the estimate?** Cost across team experience and complexity, everything else held at your values. The diamond is your estimate.
+- **What does it cost to keep running?** Build cost, maintenance over the years you chose (nominal and in today's dollars) and the total cost of ownership, with a chart of ownership cost at other maintenance rates.
+- **Assumptions and data** Every input behind the number, and a plain-text report you can paste anywhere.
 
 ---
 
-## Frequently Asked Questions
+## What the numbers mean (honest fine print)
+
+- **Estimate range (±30%)**: software estimation is uncertain. The range reflects the typical accuracy of this class of model (COCOMO II); treat the low and high ends as equally plausible. Figures are rounded for display.
+- **Schedule warnings**: if you cap the schedule tighter than the work naturally allows, the app adds a compression premium (rush work costs more) and says so. If the deadline would need more people than your team cap allows, it flags the plan as **not feasible** rather than pretending.
+- **Consistency**: effort = team size × schedule, the waterfall totals the headline cost, the ranked drivers use the same numbers as the waterfall, and the PDF shows the same figures as the screen.
+
+---
+
+## Scenarios
+
+1. Get an estimate you like on the **Estimate** page and choose **Save as scenario**.
+2. Change something (a shorter deadline, a smaller team, higher complexity) and save again. Up to three.
+3. On the **Scenarios** page, every saved scenario has its own cost, schedule, team and status, and an **Inputs** panel you can edit; the comparison updates as you type. One developer-year cost is shared by all scenarios so the dollars stay comparable.
+
+The chart puts cost (with its range), schedule and team on the same scales, and the table lists every input and result, with the cost difference against Scenario 1.
+
+---
+
+## Sharing your estimate
+
+- **PDF report**: a multi-page document with the headline estimate, charts, every assumption, how the cost is built and a methodology page. Ready to email. Takes a few seconds; the progress shows elapsed time.
+- **Copy link**: the address bar always describes the current estimate. Anyone who opens the link sees the same number. Repository scans are shared as their line counts.
+- **CSV / JSON**: the language table, the cost steps and the results, for spreadsheets or other tools.
+
+---
+
+## Frequently asked questions
 
 **Why did the cost jump when I shortened the schedule?**
-Compressed timelines require more parallel work, senior talent, and overtime.
-The model adds a premium that grows with the amount of compression (up to
-double the cost).
+Compressed timelines need more parallel work, senior talent and overtime. The model adds a premium that grows with the amount of compression (up to double the cost).
 
-**Why is the team size shown with decimals (e.g., 2.4 people)?**
-It's an average staffing level over the project — 2.4 people means roughly
-two full-time developers plus one part-time.
+**Why is the team size shown as 2.4 FTE?**
+It is an average staffing level over the project: roughly two full-time developers plus one part-time.
 
 **Why doesn't adding documentation increase the estimate?**
-Only code that must be designed, written, and tested drives cost. Docs and
-config files are listed for transparency but excluded from billing.
+Only code that must be designed, written and tested drives cost. Docs and config files are listed for transparency but excluded from billing.
 
-**Which wage should I enter?**
-The *fully-loaded* annual cost per developer — salary plus benefits and
-overhead. If you only know base salary, add roughly 25–40%.
+**Which cost per developer-year should I enter?**
+The *fully loaded* annual cost: salary plus benefits and overhead. If you only know base salary, add roughly 25 to 40%.
 
 **Can I trust a single number?**
-Use the range, not the point estimate, for budgeting — and read the
-methodology page of the PDF report for exactly how the numbers are produced.
+Use the range, not the point estimate, for budgeting, and read the methodology page of the PDF report for exactly how the numbers are produced.

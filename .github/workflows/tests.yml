@@ -7,8 +7,74 @@ on:
     branches: [main]
 
 jobs:
+  # Fast, dependency-free checks that catch the slips a reviewer would otherwise
+  # have to spot by eye. Each one mirrors a convention documented in the READMEs.
+  quality-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Colours only in theme.R
+        run: |
+          set -euo pipefail
+          hits=$(grep -rnE '#[0-9A-Fa-f]{6}\b' \
+                   --include='*.R' --include='*.css' --include='*.js' --include='*.qmd' \
+                   cost-estimator-app | grep -v 'modules/theme.R' || true)
+          if [ -n "$hits" ]; then
+            echo "Hex colours outside cost-estimator-app/modules/theme.R:"; echo "$hits"; exit 1
+          fi
+          echo "ok: every colour lives in theme.R"
+
+      - name: No font CDN and no global assignment
+        run: |
+          set -euo pipefail
+          hits=$(grep -rnE 'font_google\(|<<-' --include='*.R' cost-estimator-app R || true)
+          if [ -n "$hits" ]; then echo "$hits"; exit 1; fi
+          echo "ok: fonts are self-hosted and state stays per session"
+
+      - name: No emoji in UI code
+        run: |
+          set -euo pipefail
+          hits=$(grep -rnP '[\x{1F300}-\x{1FAFF}\x{2600}-\x{27BF}]' \
+                   cost-estimator-app/app.R cost-estimator-app/modules || true)
+          if [ -n "$hits" ]; then echo "$hits"; exit 1; fi
+          echo "ok: icons are SVG, labels are words"
+
+      - name: Engine copies match R/
+        run: |
+          set -euo pipefail
+          for f in shiny_cost_estimator.R repo_code_analyzer.R; do
+            diff -q "R/$f" "cost-estimator-app/modules/$f" || { echo "Run: Rscript tools/sync_modules.R"; exit 1; }
+          done
+          echo "ok: modules/ copies are in sync"
+
+      - name: Onboarding page embeds its JSON source
+        run: |
+          set -euo pipefail
+          python3 - <<'EOF'
+          import json, re, sys
+          d = "cost-estimator-app/www/onboarding"
+          src = open(f"{d}/shiny_cost_estimator_onboarding.json").read()
+          json.loads(src)
+          html = open(f"{d}/index.html").read()
+          m = re.search(r'<script id="onboarding-data" type="application/json">(.*?)</script>', html, re.S)
+          if not m or json.loads(m.group(1)) != json.loads(src):
+              sys.exit("index.html does not embed shiny_cost_estimator_onboarding.json; re-inject it")
+          print("ok: onboarding page and JSON are in sync")
+          EOF
+
+      - name: Version in one place
+        run: |
+          set -euo pipefail
+          v=$(grep -oE 'APP_VERSION +<- +"[0-9.]+"' cost-estimator-app/app.R | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          grep -q "## v$v" cost-estimator-app/markdown/release_notes.md || { echo "release_notes.md has no entry for v$v"; exit 1; }
+          grep -q "version-$v" README.md || { echo "README badge is not v$v"; exit 1; }
+          echo "ok: v$v in app.R, release notes and README badge"
+
   testthat:
     runs-on: ubuntu-latest
+    env:
+      CI: "true"   # tests/testthat.R turns warnings into failures when CI is set
     steps:
       - uses: actions/checkout@v4
 
@@ -31,7 +97,21 @@ jobs:
             any::ragg
             any::knitr
             any::quarto
+            any::systemfonts
             any::testthat
 
-      - name: Run tests
+      - name: Run tests (warnings fail the build)
         run: Rscript tests/testthat.R
+
+      - name: App starts and serves the onboarding page
+        run: |
+          set -euo pipefail
+          Rscript -e 'shiny::runApp("cost-estimator-app", port = 4321, launch.browser = FALSE, host = "127.0.0.1")' > app.log 2>&1 &
+          for i in $(seq 1 30); do
+            if curl -sf -o /dev/null http://127.0.0.1:4321/; then break; fi
+            sleep 2
+          done
+          curl -sf -o /dev/null http://127.0.0.1:4321/ || { cat app.log; exit 1; }
+          curl -sf -o /dev/null http://127.0.0.1:4321/onboarding/index.html || { echo "onboarding page not served"; exit 1; }
+          grep -qi "error" app.log && { cat app.log; exit 1; } || true
+          echo "ok: app serves / and /onboarding/index.html"

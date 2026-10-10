@@ -1,15 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#1C5D99"/>
-      <stop offset="100%" stop-color="#12406B"/>
-    </linearGradient>
-  </defs>
-  <rect width="64" height="64" rx="12" fill="url(#bg)"/>
-  <!-- Left bracket < -->
-  <path d="M18 20 L8 32 L18 44" fill="none" stroke="#A9C8EA" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Right bracket > -->
-  <path d="M46 20 L56 32 L46 44" fill="none" stroke="#A9C8EA" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <!-- Dollar sign -->
-  <text x="32" y="41" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="26" fill="#ffffff">$</text>
+  <!-- Petrol badge with the app's signature mark: an estimate range band and its marker -->
+  <rect width="64" height="64" rx="12" fill="#0F4C5C"/>
+  <rect x="12" y="29" width="40" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.35"/>
+  <rect x="18" y="29" width="28" height="6" rx="3" fill="#FFFFFF" fill-opacity="0.9"/>
+  <rect x="17" y="23" width="3" height="18" rx="1.5" fill="#FFFFFF"/>
+  <rect x="44" y="23" width="3" height="18" rx="1.5" fill="#FFFFFF"/>
+  <circle cx="32" cy="32" r="6.5" fill="#0F4C5C" stroke="#FFFFFF" stroke-width="3"/>
 </svg>

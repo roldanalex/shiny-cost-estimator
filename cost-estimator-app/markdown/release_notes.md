@@ -1,3 +1,43 @@
+## v2.2.0 - October 2026
+
+### Plan advisor: "What plan should I choose?"
+
+- A new section under the headline block answers the inverse question: given what you know (people available, a deadline, a budget, or nothing), which team and schedule should you choose? The planner prices every team size from 1 to 8 against every schedule cap through the same engine, so each card is an exact engine call: **Apply** sets the caps in the sidebar and the headline reproduces the card to the dollar (Undo offered); **Save as scenario** pins it.
+- Cards: with your team (plus what one more or one fewer person changes), for your deadline (smallest team and its premium), fastest within your budget, cheapest, fastest practical. Unmet deadlines name the nearest achievable date and team; unmet budgets say how much of the scope would fit and what one level better code reuse or tooling would save.
+- A staffing curve: fastest practical months and the natural schedule for one to eight people, cost on each point, the practical floor at 75% of the natural schedule (Boehm's "impossible region", COCOMO II's SCED limit), and the coordination-overhead zone from six people.
+- Plain-language advice generated from the computed numbers, no AI involved, ending with the range caveat. The PDF gains a "Plan options" page; share links carry the three facts.
+- The schedule cap now runs from 3 to 60 months in 1-month steps so long, small-team plans can be applied.
+
+## v2.1.0 - October 2026
+
+### A clearer, calmer estimate
+
+- **One page for the estimate.** Home, Analyze and Export are now a single Estimate page: inputs on the left, the result on the right. Sub-tabs are replaced by sections named for the question they answer (How is the cost built? What if the deadline moves?). The first two are open; the rest are one click away.
+- **The headline block.** A serif figure with its ±30% range drawn on a scale from $0, a status line in words (Within plan, Compressed schedule, Not feasible with this team cap), three tiles each with their reference and basis, and a scope line saying what the number rests on.
+- **First-run screen.** Instead of empty chart frames, a worked example you can run with one click and the three ways to bring in code.
+- **Live recalculation.** Line counts and uploads need Run estimate; every other input updates the result as you change it, and the page says so.
+- **Plain-language inputs.** Reuse, tooling and the five COCOMO drivers are named rating levels (Excellent tooling, Very high reliability) mapped to the published multipliers, instead of 0.01-step sliders. Every input has a real label and a help popover. Reset returns the defaults with Undo. Validation appears next to the field, and scan failures show a typed error state with the reason.
+- **Scenarios** are saved from the estimate (Save as scenario) rather than retyped. Each one is editable in place, recalculates live and shows when it has drifted from what was saved. Aligned bars and a side-by-side table with the difference against Scenario 1.
+- **Light and dark mode**, self-hosted Source Sans 3 and Source Serif 4, a new petrol palette with cost-up (copper) and cost-down (green) roles that pass contrast in both modes, keyboard focus rings, a skip link, reduced-motion support and a phone layout without horizontal scroll.
+
+### Every view tells the same story
+
+- **One cost decomposition.** The waterfall, the ranked drivers, the text report, the CSV and the PDF all read the same cost steps, which sum exactly to the headline. Previously the ranked bars used a different calculation from the waterfall.
+- **Tradeoff curve.** The marker now sits on the curve at your schedule cap; caps shorter than the natural schedule are shaded and infeasible caps are hollow. The curve covers every cap the slider offers.
+- **Total cost of ownership** is labelled by its basis everywhere; the ownership chart draws nominal and today's dollars as two lines.
+- **Share links** carry every input that moves the number (all six line counts, every parameter, maintenance), are generated from the live values, and the address bar is always the link. Repository scans share as their line counts.
+- **Rounded for display.** Figures are shown to the nearest $1,000 (nearest $100 below $100,000) so a ±30% estimate never reads as dollar-accurate; the engine is unchanged and golden tests still pass.
+- Defaults aligned: the worked example and the inputs both use team experience 4; team cap stops at 8 (the engine's limit); maintenance years default to 3 so TCO is a first-class output.
+
+### PDF report
+
+- New type and palette matching the app, labelled waterfall and ranked drivers from the shared cost steps, corrected tradeoff marker, nominal and today's-dollar ownership lines, rating level names in the assumptions table, a cost-steps table, and display rounding identical to the screen.
+
+### Under the hood
+
+- `modules/ui_helpers.R` holds the contract components (KPI tile that refuses a bare number, typed state panel that requires a reason, question-named section, labelled field with help) with unit tests; `modules/app_helpers.R` gains the share-link round trip, display formatting, rating levels and the shared cost decomposition, all tested. 297 assertions across 9 files.
+- The export module folded into the hero toolbar; one PDF handler instead of two.
+
 ## v2.0.0 - July 2026
 
 ### Branded PDF Reports

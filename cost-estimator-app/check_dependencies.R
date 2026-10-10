@@ -31,10 +31,10 @@ recommended_packages <- c(
 check_package <- function(pkg) {
   if (requireNamespace(pkg, quietly = TRUE)) {
     version <- as.character(packageVersion(pkg))
-    cat("✓", pkg, paste0("(v", version, ")"), "\n")
+    cat("[ok]", pkg, paste0("(v", version, ")"), "\n")
     return(TRUE)
   } else {
-    cat("✗", pkg, "(not installed)\n")
+    cat("[missing]", pkg, "(not installed)\n")
     return(FALSE)
   }
 }
@@ -57,9 +57,9 @@ cat("\n")
 r_version <- paste(R.version$major, R.version$minor, sep = ".")
 cat("R Version:", r_version)
 if (as.numeric(R.version$major) >= 4) {
-  cat(" ✓\n")
+  cat(" [ok]\n")
 } else {
-  cat(" ⚠ (R >= 4.0 recommended)\n")
+  cat(" [warn] R >= 4.0 recommended\n")
 }
 
 cat("\n")
@@ -75,9 +75,9 @@ source_files <- c(
 
 for (file in source_files) {
   if (file.exists(file)) {
-    cat("✓", file, "\n")
+    cat("[ok]", file, "\n")
   } else {
-    cat("✗", file, "(not found)\n")
+    cat("[missing]", file, "(not found)\n")
   }
 }
 
@@ -92,9 +92,9 @@ missing_required <- required_packages[!required_status]
 missing_recommended <- recommended_packages[!recommended_status]
 
 if (length(missing_required) == 0) {
-  cat("✓ All required packages installed!\n")
+  cat("All required packages installed.\n")
 } else {
-  cat("⚠", length(missing_required), "required package(s) missing:\n")
+  cat("[warn]", length(missing_required), "required package(s) missing:\n")
   cat("  ", paste(missing_required, collapse = ", "), "\n\n")
   cat("  Install with:\n")
   cat("  install.packages(c('", paste(missing_required, collapse = "', '"), "'))\n\n", sep = "")
@@ -110,14 +110,14 @@ if (length(missing_recommended) > 0) {
 # Ready status
 if (length(missing_required) == 0 && all(file.exists(source_files))) {
   cat("\n")
-  cat("🎉 Ready to deploy!\n")
+  cat("Ready to deploy.\n")
   cat("\n")
   cat("Next steps:\n")
   cat("  1. Test locally:  shiny::runApp('cost-estimator-app')\n")
   cat("  2. Deploy:        See DEPLOYMENT.md for instructions\n")
 } else {
   cat("\n")
-  cat("⚠ Not ready to deploy. Please install missing packages/files.\n")
+  cat("Not ready to deploy. Please install missing packages/files.\n")
 }
 
 cat("═══════════════════════════════════════════════════════════════\n\n")

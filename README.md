@@ -1,330 +1,216 @@
-# Shiny App Valuation Toolkit
+<p align="center">
+  <img src="cost-estimator-app/www/favicon.svg" width="64" alt="">
+</p>
 
-[![tests](https://github.com/roldanalex/shiny-app-valuation/actions/workflows/tests.yml/badge.svg)](https://github.com/roldanalex/shiny-app-valuation/actions/workflows/tests.yml)
+<h1 align="center">Shiny Cost Estimator</h1>
 
-**v2.0.0** · COCOMO II-based cost estimation for R Shiny and data science projects. Estimates development effort, schedule, team size, budget, maintenance costs, and Total Cost of Ownership (TCO) from code line counts and project parameters.
+<p align="center">
+  <b>What would it cost to build this software?</b> A number, its honest range, and every assumption behind it.<br>
+  COCOMO II cost, schedule, team and total-cost-of-ownership estimates for R Shiny and data-science projects, with a PDF you can forward.
+</p>
 
-## Overview
+<p align="center">
+  <a href="https://github.com/roldanalex/shiny-app-valuation/actions/workflows/tests.yml"><img alt="tests" src="https://github.com/roldanalex/shiny-app-valuation/actions/workflows/tests.yml/badge.svg"></a>
+  <a href="https://alexis-roldan-ds.shinyapps.io/shiny-cost-estimator/"><img alt="live app" src="https://img.shields.io/badge/live%20app-shinyapps.io-0F4C5C?logo=posit&logoColor=white"></a>
+  <img alt="version" src="https://img.shields.io/badge/version-2.2.0-0F4C5C">
+  <img alt="R" src="https://img.shields.io/badge/R-%E2%89%A5%204.3-276DC3?logo=r&logoColor=white">
+  <img alt="tests" src="https://img.shields.io/badge/testthat-297%20assertions-1F8A4C">
+  <img alt="model" src="https://img.shields.io/badge/model-COCOMO%20II.2000-566270">
+  <img alt="PDF" src="https://img.shields.io/badge/PDF-Quarto%20%2B%20Typst-566270">
+  <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-B4500A"></a>
+</p>
 
-Two interfaces, one estimation engine:
+<p align="center">
+  <a href="https://alexis-roldan-ds.shinyapps.io/shiny-cost-estimator/">Open the live app</a> ·
+  <a href="https://alexis-roldan-ds.shinyapps.io/shiny-cost-estimator/onboarding/index.html">Getting started guide</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#how-the-number-is-built">How it works</a> ·
+  <a href="#architecture">Architecture</a>
+</p>
 
-- **Shiny Web App** - Interactive dashboard with visualizations, branded PDF reports, scenario comparison, and export
-- **R CLI** - `analyze_repo_code()` scans a repository and prints an scc-style report with cost estimate
+<p align="center">
+  <img src="cost-estimator-app/www/onboarding/assets/estimate-light.png" alt="The Estimate page: inputs on the left; on the right the headline cost with its range and status, schedule and team tiles, and the cost waterfall" width="900">
+</p>
 
-## Quick Start
+---
 
-### Shiny App (recommended)
+## Why this exists
+
+Someone asks what an application would cost to build, rebuild, or keep running. The usual answer is a round number from memory or a spreadsheet nobody can defend. This tool runs the published **COCOMO II** model over your line counts and a handful of plain-language choices, and shows the result as a decision:
+
+- **One figure with its ±30% range**, drawn on a scale from $0 so you can see how wide the uncertainty is.
+- **A status in words**: *Within plan*, *Compressed schedule (+18% cost)*, or *Not feasible with this team cap*.
+- **Every view tells the same story.** The waterfall, the ranked drivers, the text report, the CSV and the PDF all read one cost decomposition that sums exactly to the headline.
+- **A plan advisor** that turns what you know (people, deadline, budget) into exact plans you can apply with one click.
+- **Scenarios** you save from the estimate and compare on the same scales; a **share link** that reopens the exact estimate; a **six-page PDF**.
+
+## Quick start
 
 ```bash
-# Install dependencies
+# 1. Install the R packages (plus the Quarto CLI >= 1.3 if you want PDF reports)
 Rscript cost-estimator-app/check_dependencies.R
 
-# Launch
+# 2. Launch
 Rscript cost-estimator-app/run_app.R
 ```
 
-### R Command Line
+Then choose **Run this example** on the first screen, or type your own line counts and choose **Run estimate**. Line counts and uploads need *Run estimate*; every other input recalculates live.
+
+Prefer the command line? The same engine scans a repository and prints a report:
 
 ```r
 source("R/repo_code_analyzer.R")
 analyze_repo_code(".", avg_wage = 105000, complexity = "medium", team_experience = 4)
 ```
 
-## Architecture
+## What you can do
 
-### High-Level System Architecture
+| | |
+|---|---|
+| **Three code sources** | Type line counts per language, upload a repository ZIP (50 MB, extracted in an isolated folder with path-traversal checks), or scan a local folder. Documentation and config files are shown but never billed. |
+| **Plan advisor** | *What plan should I choose?* Tell it what you know (people, deadline, budget, or nothing) and get exact plans: cheapest, fastest practical, with your team, for your deadline, within budget, each with Apply and Save. A staffing curve shows months by team size, the 75% practical floor and the coordination-overhead zone. Unmet targets are explained (nearest date, scope that fits, levers that close the gap). No AI: every card is an engine call. |
+| **Plain-language inputs** | Reuse, tooling and the five COCOMO drivers are named rating levels ("Excellent: IDE, CI/CD, tests, review") mapped to the published multipliers. Every input has a help popover. Reset with Undo. |
+| **Question-named sections** | *How is the cost built?* (labelled waterfall) · *What if the deadline moves?* (cost at every cap, marker at yours, shaded compression, hollow infeasible caps) · *Which choices matter most?* · *What is the code made of?* · *How sensitive is the estimate?* · *What does it cost to keep running?* · *Assumptions and data* |
+| **Scenarios** | Save up to three estimates from the Estimate page, edit each in place, compare on aligned bars and a table with the cost difference against the baseline. |
+| **Share and export** | PDF report (Quarto + Typst, no LaTeX, no Chrome), a link that reopens the exact estimate, CSV and JSON. |
+| **Accessible by default** | Light and dark themes from one token set, self-hosted fonts, keyboard focus rings, skip link, reduced-motion support, status never by colour alone, phone layout. |
 
-```mermaid
-graph TB
-    subgraph Interfaces
-        APP["Shiny Web App<br/><i>cost-estimator-app/app.R</i>"]
-        RCLI["R CLI<br/><i>R/repo_code_analyzer.R</i>"]
-    end
+<p align="center">
+  <img src="cost-estimator-app/www/onboarding/assets/estimate-dark.png" alt="The same estimate in dark mode" width="440">
+  <img src="cost-estimator-app/www/onboarding/assets/scenarios-light.png" alt="Scenarios page with two saved scenarios side by side" width="440">
+</p>
 
-    subgraph Core["Core Estimation Engine"]
-        EST["estimate_shiny_cost()<br/><i>R/shiny_cost_estimator.R</i>"]
-        SCAN["analyze_repo_code()<br/><i>R/repo_code_analyzer.R</i>"]
-    end
-
-    subgraph Model["COCOMO II Model"]
-        FORMULA["effort = A × KLOC^B × EM_total"]
-        SCHED["schedule = C × effort^D"]
-        CONST["Constraints & Premiums"]
-    end
-
-    APP --> SCAN
-    APP --> EST
-    RCLI --> SCAN
-    SCAN --> EST
-
-    EST --> FORMULA
-    EST --> SCHED
-    EST --> CONST
-```
-
-### Shiny App Module Architecture
-
-```mermaid
-graph LR
-    subgraph app.R["app.R — Main App"]
-        NAV["Navbar<br/>4 tabs"]
-        PARAMS["Parameter<br/>Reactives"]
-        NAV --> HOME["Home"]
-        NAV --> AN["Analyze<br/><i>Local / ZIP / Manual</i>"]
-        NAV --> COMP["Compare"]
-        NAV --> EXP["Export"]
-    end
-
-    subgraph Modules
-        TH["theme.R<br/><i>design tokens</i>"]
-        AM["analysis_module.R<br/><i>analysisResultsUI/Server</i>"]
-        CM["comparison_module.R<br/><i>comparisonUI/Server</i>"]
-        EM["export_module.R<br/><i>exportUI/Server</i>"]
-        PR["pdf_report.R<br/><i>Quarto + Typst render</i>"]
-    end
-
-    AN --> AM
-    COMP --> CM
-    EXP --> EM
-    AM --> PR
-    EM --> PR
-    PARAMS --> AM
-```
-
-### Analysis Module Sub-tabs
-
-The Analyze tab (Local Folder / ZIP Upload / Manual Entry input methods) shares one analysis module with four sub-tabs:
-
-```mermaid
-graph TB
-    AM["Analysis Module<br/><i>analysisResultsUI/Server</i>"]
-
-    AM --> R["Results<br/>Hero + KPI cards + waterfall<br/>+ language treemap"]
-    AM --> D["Details<br/>Language breakdown table<br/>+ estimate report"]
-    AM --> S["Sensitivity<br/>Interactive parameter<br/>impact chart"]
-    AM --> M["Maintenance & TCO<br/>Year-by-year costs<br/>+ TCO projection"]
-```
-
-### COCOMO II Estimation Pipeline
+## How the number is built
 
 ```mermaid
 flowchart LR
-    A["Source Code<br/><i>or manual line counts</i>"] --> B["Language<br/>Detection &<br/>Line Counting"]
-    B --> C["Productivity<br/>Weighting<br/><i>SQL 1.3×, JS 0.9×</i>"]
-    C --> D["COCOMO II<br/>Effort Calc<br/><i>A × KLOC^B × EM</i>"]
-    D --> E["Schedule &<br/>Team Sizing"]
-    E --> F["Constraint<br/>Application<br/><i>caps, premiums</i>"]
-    F --> G["Cost<br/>Estimate<br/><i>+ estimate range ±30%</i>"]
-    G --> H["Maintenance<br/>& TCO<br/><i>5%/yr escalation, NPV</i>"]
+    A["Source code<br/><i>or manual line counts</i>"] --> B["Count and weight<br/><i>languages detected,<br/>docs and config never billed</i>"]
+    B --> C["COCOMO II effort<br/><i>2.94 × KLOC^B × EM × 0.85</i>"]
+    C --> D["Schedule and team<br/><i>3.67 × Effort^D</i>"]
+    D --> E["Caps and premiums<br/><i>team cap, rush premium ≤ 2×,<br/>coordination +10% at 6+</i>"]
+    E --> F["Estimate ± 30%<br/><i>rounded for display</i>"]
+    F --> G["Ownership<br/><i>maintenance +5%/yr,<br/>discounted TCO</i>"]
 ```
 
-### Data Flow
+| Step | What happens |
+|---|---|
+| **Count and weight** | Languages are detected and weighted for productivity (SQL 1.3×, JavaScript 0.9×). Markdown, JSON, YAML, SVG and similar files are listed but excluded from billable size. |
+| **Effort** | `Effort = 2.94 × KLOC^B × EM_total × 0.85`, where `B` is 1.02 / 1.10 / 1.18 for low / medium / high complexity, `EM_total` is the product of the effort multipliers, and 0.85 is a documented calibration for modern frameworks, applied once. |
+| **Schedule and team** | `TDEV = 3.67 × Effort^D` with `D = 0.28 + 0.2 × (B − 0.91)`. Team = effort ÷ schedule, capped at your team cap (never above 8). |
+| **Caps and premiums** | A schedule cap below the natural schedule adds a smooth premium `ratio^1.25` (anchored to COCOMO II's SCED driver, capped at 2×). Teams of 6+ carry 10% coordination overhead. A plan that needs more people than the cap is flagged **not feasible**, never silently absorbed. |
+| **Range** | ±30% is the typical accuracy of COCOMO II for uncalibrated projects. It is called an estimate range, never a confidence interval. Figures are rounded to the nearest $1,000 above $100,000. |
+| **Ownership** | Annual maintenance is a share of the build cost, escalating 5% a year, shown nominal and discounted (default 5%) so the total cost of ownership is in today's dollars. |
+
+The displayed numbers are internally consistent: effort = team × schedule, and the cost steps sum exactly to the headline. Golden-value tests freeze the engine's outputs.
+
+### Inputs
+
+| Input | Choices | Default |
+|---|---|---|
+| Complexity | Low / Medium / High | Medium |
+| Team experience | 1 (novice) to 5 (expert) | 4 |
+| Code reuse | Very high reuse … None (0.70 to 1.30) | Typical (1.00) |
+| Tooling and process | Excellent … Poor (0.80 to 1.20) | Standard (1.00) |
+| Cost per developer-year | $50,000 to $300,000 | $105,000 |
+| Team cap | 1 to 8 people | 5 |
+| Schedule cap | 3 to 60 months | 24 |
+| Reliability, product complexity, reusability, team continuity, domain experience | COCOMO II.2000 rating levels | Nominal (1.00) |
+| Maintenance rate / years | 0 to 40% / 0 to 10 years | 20% / 3 |
+
+## Architecture
 
 ```mermaid
-sequenceDiagram
-    participant U as User
-    participant App as app.R
-    participant Mod as analysis_module
-    participant Est as estimate_shiny_cost()
-
-    U->>App: Analyze repo / Enter lines
-    App->>App: Build params reactive
-    App->>Mod: analysisResultsServer(data, params)
-    Mod->>Est: estimate_shiny_cost(lines, params)
-    Est-->>Mod: Result list (cost, schedule, team, range, maintenance)
-    Mod-->>App: Render value boxes, charts, tables
-    App-->>U: Display results in sub-tabs
-
-    opt PDF report
-        U->>Mod: Click PDF Report
-        Mod->>Mod: Build payload (est, curve, tokens)
-        Mod-->>U: Quarto + Typst render, PDF download
+graph LR
+    subgraph Inputs
+        SB["Sidebar<br/><i>source · project · money and limits<br/>drivers · maintenance</i>"]
     end
+    subgraph Engine["Engine (R/, synced to modules/)"]
+        SCAN["analyze_repo_code()"]
+        EST["estimate_shiny_cost()"]
+    end
+    subgraph One["One decomposition"]
+        STEPS["cost_steps()<br/><i>sums to the headline</i>"]
+    end
+    subgraph Views["Views (all read the same steps)"]
+        UI["Estimate page<br/><i>hero + sections + strip</i>"]
+        SC["Scenarios"]
+        PDF["PDF report"]
+        EXP["Share link · CSV · JSON"]
+    end
+    SB --> SCAN --> EST --> STEPS
+    SB --> EST
+    STEPS --> UI & PDF & EXP
+    UI -- "Save as scenario" --> SC
+    EXP -. "reopens the estimate" .-> SB
 ```
 
-## How It Works
-
-The COCOMO II parametric model:
-
-```
-Effort (person-months) = A × KLOC^B × EM_total × 0.85
-
-A     = 2.94 (COCOMO II.2000 calibration)
-0.85  = documented modern-framework calibration (applied once)
-B     = 1.02 - 1.18 (complexity exponent: low/medium/high)
-KLOC  = thousands of billable lines, weighted by language productivity
-        (docs/config files - Markdown, JSON, YAML, SVG... - are excluded)
-EM    = product of effort multipliers (experience, reuse, tools, COCOMO drivers)
-
-TDEV  = 3.67 × Effort^D,  D = 0.28 + 0.2 × (B − 0.91)
-```
-
-Realistic constraints cap team size at min(max_team_size, 8) and schedule at max_schedule_months. Compressed timelines carry a smooth premium (ratio^1.25, anchored to COCOMO II's SCED driver, capped at 2.0×), and plans that would exceed the team cap are flagged as infeasible. Teams of 6+ get a 10% coordination premium. The reported numbers are internally consistent: effort = team × schedule. The ±30% band is an estimate range (typical COCOMO II accuracy), not a statistical confidence interval.
-
-### Maintenance & TCO
-
-When maintenance years > 0, the model projects ongoing costs:
-
-- **Annual maintenance** = build cost × maintenance_rate
-- Costs **escalate at 5% per year** to account for growing complexity and knowledge turnover
-- Multi-year totals are reported nominally **and discounted to present value** (default 5%/yr)
-- **TCO** = build cost + maintenance present value
-
-## Key Parameters
-
-| Parameter | Range | Default | Description |
-|---|---|---|---|
-| `complexity` | low / medium / high | medium | Drives the exponent B |
-| `team_experience` | 1-5 | 4 | 1=novice (+15%), 5=expert (-5%) |
-| `reuse_factor` | 0.7-1.3 | 1.0 | Lower = more reuse |
-| `tool_support` | 0.8-1.2 | 1.0 | Lower = better tooling |
-| `avg_wage` | $50K-$300K | $105K | Annual developer salary |
-| `max_team_size` | 1-10 | 5 | Hard cap on team (max 8 effective) |
-| `max_schedule_months` | 3-36 | 24 | Schedule ceiling |
-| `rely, cplx, ruse, pcon, apex` | varies | 1.0 | Advanced COCOMO II cost drivers |
-| `maintenance_rate` | 0-0.40 | 0.20 | Annual maintenance as fraction of build cost |
-| `maintenance_years` | 0-10 | 0 | Years to project maintenance (0 = disabled) |
-
-## Features
-
-### Interactive Dashboard
-
-- **Hero estimate card** with the ±30% estimate range, plus unified KPI cards for code lines, schedule, team size, and effort/TCO
-- **Waterfall cost breakdown** that totals exactly the headline cost, including schedule-compression and coordination steps
-- **Language distribution** treemap (non-billable docs/config shown greyed out)
-- **Sensitivity analysis** — curves that pass through your actual estimate, marker included
-- **Branded PDF report** (Quarto + Typst) with cover, charts, assumptions, and methodology
-- **Light professional theme** driven by a design-token layer (`modules/theme.R` + `www/custom.css`)
-
-### Three Analysis Modes
-
-- **Local Folder** — browse to a repository on your machine; files are scanned and counted automatically
-- **ZIP Upload** — upload a `.zip` of any repository (max 50 MB); extracted in an isolated temp directory with path-traversal validation
-- **Manual Entry** — enter line counts per language (R, Python, JavaScript, SQL, CSS, Other) for quick estimates
-
-### Branded PDF Report
-
-One click (Export tab or the summary strip) renders a 4-5 page client-ready PDF: cover with logo and headline estimate, KPI summary, waterfall and driver charts, schedule/TCO analysis, a full assumptions table, and a methodology page. Rendered with **Quarto + Typst** (`cost-estimator-app/report/`) — no LaTeX or Chrome required, works on shinyapps.io.
-
-### Scenario Comparison
-
-Compare up to 3 scenarios side-by-side in the Compare tab. Shared cost parameters (wage, max schedule) apply to all scenarios so dollar figures stay comparable; results appear as three-panel charts (cost with range bars, schedule, team) plus a table.
-
-### Export & Sharing
-
-- **PDF report** (see above)
-- **Shareable URLs** with proper protocol detection (http/https) and pre-filled Manual Entry parameters; inbound parameters are validated and bounds-checked
-- **CSV export** of analysis results
-- **JSON export** for programmatic consumption
-
-### In-App Documentation
-
-- **How to Use** — a task-oriented user manual (first estimate, reading results, sharing) in a modal, written for non-technical users
-- **User Guide** and **Release Notes** accessible via navbar buttons
-- Context-sensitive `?` help buttons next to every sidebar parameter with detailed explanations
-
-## Project Structure
+A larger, annotated version lives in [`docs/diagrams/architecture.drawio`](docs/diagrams/architecture.drawio) (rendered: [`architecture.drawio.png`](docs/diagrams/architecture.drawio.png)).
 
 ```
 shiny-app-valuation/
-├── R/
-│   ├── shiny_cost_estimator.R       # Core COCOMO II estimation engine
-│   └── repo_code_analyzer.R         # Repository scanner + estimator
-├── cost-estimator-app/
-│   ├── app.R                        # Main Shiny app
-│   ├── run_app.R                    # Launcher script
-│   ├── check_dependencies.R         # Dependency checker
+├── R/                               # Canonical engine
+│   ├── shiny_cost_estimator.R       #   COCOMO II estimation
+│   └── repo_code_analyzer.R         #   Repository scanner + CLI report
+├── cost-estimator-app/              # The Shiny app (see its README for details)
+│   ├── app.R                        #   UI, sidebar, interaction model, URL state
 │   ├── modules/
-│   │   ├── theme.R                  # Design tokens (single source of truth)
-│   │   ├── app_helpers.R            # Pure input-sanitizing helpers
-│   │   ├── pdf_report.R             # Quarto + Typst PDF pipeline
-│   │   ├── analysis_module.R        # Shared results UI/server (4 sub-tabs)
-│   │   ├── comparison_module.R      # Scenario comparison (up to 3)
-│   │   ├── export_module.R          # PDF / URL / CSV / JSON export
-│   │   ├── shiny_cost_estimator.R   # BUILD ARTIFACT (synced from R/)
-│   │   └── repo_code_analyzer.R     # BUILD ARTIFACT (synced from R/)
-│   ├── report/                      # Branded PDF report (qmd + charts + fonts)
-│   ├── markdown/
-│   │   ├── user_guide.md            # In-app user guide
-│   │   └── release_notes.md         # In-app release notes
-│   └── www/
-│       ├── custom.css               # Light theme (token-driven)
-│       └── favicon.svg
-├── tools/
-│   ├── sync_modules.R               # Refresh modules/ engine copies
-│   └── deploy.R                     # Sync + deploy to shinyapps.io
-├── tests/
-│   ├── testthat.R                   # Test runner
-│   └── testthat/                    # ~180 assertions across 8 files
-├── LICENSE                          # MIT License
-└── README.md
+│   │   ├── theme.R                  #   Design tokens: light + dark palettes, fonts
+│   │   ├── app_helpers.R            #   Formatting, defaults, rating levels, share link, cost_steps()
+│   │   ├── plan_helpers.R           #   Plan advisor: grid, recommendations, staffing curve, narrative
+│   │   ├── ui_helpers.R             #   Contract components (KPI, state, section, field, hero)
+│   │   ├── analysis_module.R        #   Estimate page results, strip, exports
+│   │   ├── comparison_module.R      #   Scenarios
+│   │   ├── pdf_report.R             #   Quarto + Typst pipeline
+│   │   └── *.R (build artifacts)    #   Synced copies of R/ for deployment
+│   ├── report/                      #   PDF template, ggplot2 charts, fonts
+│   ├── www/                         #   Stylesheet, fonts, app.js, onboarding page
+│   └── markdown/                    #   In-app how-to, user guide, release notes
+├── docs/diagrams/                   # draw.io architecture diagram
+├── tests/testthat/                  # ~370 assertions across 10 files
+└── tools/                           # sync_modules.R, deploy.R
 ```
 
-### Module Responsibilities
+**Design tokens.** Every colour lives in `cost-estimator-app/modules/theme.R`, light and dark. bslib, the stylesheet (through generated `--app-*` variables), every plotly chart and the PDF read the same source. **Engine sync.** The copies of the engine under `modules/` are build artifacts refreshed by `Rscript tools/sync_modules.R`; a test fails if they drift.
 
-| Module | UI Function | Server Function | Purpose |
-|---|---|---|---|
-| `analysis_module.R` | `analysisResultsUI()` | `analysisResultsServer()` | Hero + KPI cards, waterfall, treemap, driver chart, tradeoff curve, details, sensitivity, maintenance, summary strip + PDF button |
-| `comparison_module.R` | `comparisonUI()` | `comparisonServer()` | Side-by-side comparison with shared cost parameters |
-| `export_module.R` | `exportUI()` | `exportServer()` | PDF report, shareable URL generation, CSV/JSON download |
+## Documentation
 
-### Source Resolution
+| For | Read |
+|---|---|
+| New users | [Getting started guide](https://alexis-roldan-ds.shinyapps.io/shiny-cost-estimator/onboarding/index.html) (why + guided walkthrough with checkpoints; source in [`cost-estimator-app/www/onboarding/`](cost-estimator-app/www/onboarding/)) |
+| Inside the app | Help menu: How to use, User guide, Release notes |
+| Developers | [`cost-estimator-app/README.md`](cost-estimator-app/README.md) · [`GETTING_STARTED.md`](cost-estimator-app/GETTING_STARTED.md) · [`DEPLOYMENT.md`](cost-estimator-app/DEPLOYMENT.md) |
+| What changed | [Release notes](cost-estimator-app/markdown/release_notes.md) |
 
-The app sources estimation functions from `../R/` (project root) with a fallback to `modules/` copies for deployment environments where the parent directory is not available. The `modules/` copies are **build artifacts**: refresh them with `Rscript tools/sync_modules.R` (never edit them by hand — a test fails if they drift), and deploy with `Rscript tools/deploy.R`, which syncs first.
-
-## Running Tests
+## Tests
 
 ```bash
 Rscript tests/testthat.R
 ```
 
-Requires the `testthat` package. The suite (~180 assertions) covers:
+297 assertions across 9 files: golden-value regressions; model invariants (effort = team × schedule, cost continuity at the schedule cap, exact wage linearity); input validation; analyzer billable classification; display rounding and rating levels; the share-link round trip (identical estimate to the dollar); `cost_steps()` summing exactly to the headline; UI-helper contracts (a KPI needs a reference and n, a state panel needs a reason); a `testServer` smoke test; an end-to-end PDF render; engine/module drift detection. On CI a warning fails the build.
 
-- Golden-value regressions for the engine
-- Model invariants: effort = team × schedule, cost continuity in the schedule cap, exact wage linearity
-- Input validation (including wage/team/schedule/discount-rate bounds)
-- Maintenance math, 5%/yr escalation, and present-value discounting
-- Estimate-range bounds and multiplier-breakdown consistency
-- Analyzer billable classification (docs/config never move the estimate)
-- Manual-entry sanitization helpers and URL parameter parsing
-- A `testServer` smoke test and an end-to-end PDF render
-- Engine/modules file-sync drift detection
-
-## Dependencies
-
-### Required
-
-| Package | Purpose |
-|---|---|
-| `shiny` | Web application framework |
-| `bslib` | Bootstrap 5 theming and layout |
-| `plotly` | Interactive charts (waterfall, treemap, sensitivity, maintenance) |
-| `DT` | Interactive data tables |
-| `markdown` | In-app User Guide / Release Notes |
-| `jsonlite` | JSON export |
-| `quarto` | PDF report rendering (needs Quarto CLI ≥ 1.3; Typst is bundled) |
-| `ggplot2`, `knitr`, `ragg` | Static charts and tables inside the PDF report |
-
-### Development
-
-| Package | Purpose |
-|---|---|
-| `testthat` | Unit testing framework |
+The workflow also runs quality gates before the tests: colours only in `theme.R`, no font CDN, no global assignment, no emoji in UI code, engine copies in sync with `R/`, the onboarding page in sync with its JSON, and one version across `app.R`, the release notes and the README badge. A final step starts the app and checks that it serves the estimate page and the onboarding page.
 
 ## Deployment
 
-The Shiny app can be deployed to:
+| Target | How |
+|---|---|
+| **shinyapps.io** | `Rscript tools/deploy.R` (syncs the engine copies, then deploys `cost-estimator-app/`) |
+| **Posit Connect / Shiny Server** | Point at `cost-estimator-app/`; the Folder source hides itself on servers |
+| **Docker** | Install R + dependencies and the Quarto CLI, copy the project, expose the Shiny port |
 
-- **shinyapps.io** — upload the `cost-estimator-app/` directory (uses `modules/` fallback copies automatically)
-- **Posit Connect / Shiny Server** — point to `cost-estimator-app/`
-- **Docker** — install R + dependencies, copy the full project, expose the Shiny port
+Details, including the Quarto/Typst notes for PDF rendering, are in [`DEPLOYMENT.md`](cost-estimator-app/DEPLOYMENT.md).
 
-For deployment platforms, the `modules/` directory contains fallback copies of the core estimation files so the app works without access to the `../R/` parent directory.
+### Dependencies
+
+`shiny`, `bslib` (0.12+), `plotly`, `DT`, `markdown`, `jsonlite`, and for the PDF `quarto`, `ggplot2`, `knitr`, `ragg` plus the [Quarto CLI](https://quarto.org) 1.3 or later (Typst is bundled; no LaTeX or Chrome). `testthat` for the tests.
+
+## Contributing
+
+Issues and pull requests are welcome at [github.com/roldanalex/shiny-app-valuation](https://github.com/roldanalex/shiny-app-valuation/issues). Keep the engine changes in `R/`, run `Rscript tools/sync_modules.R`, and make sure `Rscript tests/testthat.R` is green. Colours go in `theme.R`, never inline.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
 
-## Author
-
-Alexis Roldan
+<p align="center"><sub>Created by Alexis Roldan</sub></p>

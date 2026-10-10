@@ -1,146 +1,127 @@
 ## Overview
 
-The Shiny Cost Estimator uses the **COCOMO II** (Constructive Cost Model) methodology to estimate the cost, schedule, team size, and budget required for software projects. It analyzes your codebase or accepts manual line counts, then applies industry-standard parametric models to produce realistic estimates.
+The Shiny Cost Estimator uses the **COCOMO II** (Constructive Cost Model) methodology to estimate the cost, schedule, team size and budget required for software projects. It analyses your codebase or accepts manual line counts, then applies the published parametric model to produce an estimate with an honest range.
 
 **What it estimates:**
 
-- Development cost (USD)
-- Schedule duration (months)
-- Team size (people)
-- Estimate range (+/- 30%)
-- Maintenance costs and Total Cost of Ownership (TCO)
+- Development cost (USD) with an estimate range (±30%)
+- Schedule (months) against your cap
+- Team size (full-time equivalents) against your cap
+- Maintenance costs and total cost of ownership (TCO)
 
 ---
 
-## Analysis Modes
+## Where is the code?
 
-All three input methods are available from the single **Analyze** tab. Use the selector at the top of the sidebar to switch between them.
+The selector at the top of the sidebar picks one of three sources.
 
-### Local Folder
+### Manual
 
-Best for analyzing projects on your local machine.
+Type line counts per language (R, Python, JavaScript, SQL, CSS, Other). Choose **Run estimate**.
 
-> **Note:** Local Folder is only available when running the app locally (e.g., from RStudio or `shiny::runApp()`). On the hosted version (shinyapps.io), use **ZIP Upload** or **Manual Entry** instead.
+### ZIP
 
-1. Navigate to the **Analyze** tab
-2. Select **Local Folder** in the sidebar selector
-3. Enter or browse to the repository path
-4. Adjust project settings in the sidebar
-5. Click **Run Analysis**
-6. Review results in the sub-tabs on the right
+Upload a `.zip` of the repository (max 50 MB). Files are extracted in an isolated temporary folder, counted, and discarded. Choose **Run estimate**.
 
-### ZIP Upload
+### Folder
 
-Best for analyzing projects on a deployed server or when sharing with others.
+Only available when the app runs on your own computer. Enter or browse to the repository path and choose **Run estimate**.
 
-1. Navigate to the **Analyze** tab
-2. Select **ZIP Upload** in the sidebar selector
-3. Click **Browse** and select a `.zip` file of your repository (max 50 MB)
-4. Adjust project settings in the sidebar
-5. Click **Run Analysis**
-6. Review results in the sub-tabs on the right
+Documentation and configuration files (Markdown, JSON, YAML, SVG, …) are shown in the results but never counted toward the cost.
 
-### Manual Entry
-
-Best for quick estimates when you already know your line counts.
-
-1. Navigate to the **Analyze** tab
-2. Select **Manual Entry** in the sidebar selector
-3. Enter code lines per language (R, Python, JavaScript, SQL, CSS, Other)
-4. Adjust project settings in the sidebar
-5. Click **Run Analysis**
-6. Review results in the sub-tabs on the right
+> **Live recalculation.** Only the source inputs need *Run estimate*. Every parameter below recalculates the estimate the moment it changes.
 
 ---
 
-## Sidebar Parameters
+## The project
 
-| Parameter | Range | Default | Description |
+| Input | Choices | Default | What it controls |
 |---|---|---|---|
-| Complexity | Low / Medium / High | Medium | Architectural complexity of the project |
-| Team Experience | 1 (Novice) - 5 (Expert) | 4 | Average team skill level |
-| Reuse Factor | 0.70 - 1.30 | 1.00 | Code reuse (lower = more reuse) |
-| Tool Support | 0.80 - 1.20 | 1.00 | Quality of dev tooling (lower = better) |
-| Average Annual Wage | $50K - $300K | $105K | Average developer salary |
-| Max Team Size | 1 - 10 | 5 | Maximum team members allowed |
-| Max Schedule | 3 - 36 months | 24 | Maximum project duration |
+| Complexity | Low / Medium / High | Medium | Architectural complexity; drives the size exponent |
+| Team experience | 1 (Novice) to 5 (Expert) | 4 (Proficient) | Average team skill |
+| Code reuse | Very high reuse … None | Typical (1.00) | How much existing code can be leaned on |
+| Tooling and process | Excellent … Poor | Standard (1.00) | Quality of IDE, version control, CI/CD, tests, review |
 
----
+Code reuse and tooling are chosen as named levels. Each level maps to a published effort multiplier (shown in the Assumptions section).
 
-## Advanced COCOMO Drivers
+## Money and limits
 
-Expand the **Advanced COCOMO Drivers** section in the sidebar to fine-tune the model:
-
-| Driver | Range | Default | What it controls |
+| Input | Range | Default | What it controls |
 |---|---|---|---|
-| Required Reliability (RELY) | 0.82 - 1.26 | 1.00 | Cost of software failure |
-| Product Complexity (CPLX) | 0.73 - 1.74 | 1.00 | Algorithmic and control complexity |
-| Required Reusability (RUSE) | 0.95 - 1.24 | 1.00 | Effort to build reusable components |
-| Personnel Continuity (PCON) | 0.81 - 1.29 | 1.00 | Impact of team turnover |
-| Application Experience (APEX) | 0.81 - 1.22 | 1.00 | Team familiarity with the domain |
-
-Values above 1.0 increase effort; values below 1.0 decrease effort.
+| Cost per developer-year | $50,000 to $300,000 | $105,000 | Fully loaded annual cost of one developer; converts effort to money |
+| Team cap | 1 to 8 people | 5 | The most people on the project at once (6+ adds a 10% coordination premium) |
+| Schedule cap | 3 to 60 months | 24 | The longest the project may take; tighter caps add a compression premium |
 
 ---
 
-## Maintenance & TCO
+## Advanced COCOMO drivers
 
-Expand the **Maintenance & TCO** section in the sidebar:
+Expand **Advanced COCOMO drivers** in the sidebar. Each driver is a named rating level from COCOMO II.2000; the badge next to the heading shows their combined effect.
 
-- **Annual Maintenance Rate**: Percentage of build cost spent on maintenance per year (default: 20%)
-- **Maintenance Years**: Number of years to project (default: 0 = disabled)
+| Driver | Levels | What it controls |
+|---|---|---|
+| Required reliability | Very low (0.82) to Very high (1.26) | Cost of a failure |
+| Product complexity | Very low (0.73) to Extra high (1.74) | Algorithmic and control complexity |
+| Required reusability | Low (0.95) to Extra high (1.24) | Effort to build components others will reuse |
+| Team continuity | Very high (0.81) to Very low (1.29) | Impact of turnover |
+| Domain experience | Very high (0.81) to Very low (1.22) | Familiarity with this kind of application |
 
-When enabled, the Maintenance sub-tab shows annual costs (with 5% compounding for knowledge turnover) and the Total Cost of Ownership (build + maintenance discounted to present value at 5%/yr).
-
----
-
-## Understanding Results
-
-Results appear in four sub-tabs:
-
-### Results
-
-A hero card with the estimated cost and its +/-30% estimate range, plus KPI cards for code lines, schedule, team size, and effort/TCO. When repository analysis finds documentation or config files, those lines are shown but excluded from the billable estimate. Below these are four charts:
-
-- **Code Distribution by Language** — a treemap showing the share of code lines per language
-- **Cost Breakdown: COCOMO II Multipliers** — a waterfall chart showing how each effort multiplier adds or removes cost from the base estimate
-- **What's Driving Your Cost?** — a horizontal bar chart ranking each driver by its dollar impact (red = adds cost, green = saves cost)
-- **Schedule vs. Cost Tradeoff** — a curve showing how changing the max schedule deadline affects the total cost
-
-Each chart card has a full-screen expand icon in the top-right corner. A persistent summary strip at the bottom of the page always shows the key metrics (cost, schedule, team, estimate range) and a one-click PDF Report download.
-
-### Details
-
-- **Language breakdown** treemap (for repo analyses)
-- **Detailed parameters table** showing all inputs and calculated values
-
-### Sensitivity
-
-Interactive chart showing how the estimate changes as you vary complexity and team experience while holding other parameters constant.
-
-### Maintenance & TCO
-
-Visible when maintenance years > 0. Shows:
-
-- Build cost, total maintenance, and TCO value boxes
-- **Cumulative TCO Over Time** — a line chart showing year-by-year growth in total spend, with a break-even annotation when cumulative maintenance equals the build cost
-- **TCO at Different Maintenance Rates** — a bar chart comparing total cost of ownership across maintenance rate scenarios
+Levels above nominal (1.00) increase effort; levels below decrease it.
 
 ---
 
-## Compare
+## Maintenance and TCO
 
-The **Compare** tab lets you evaluate up to 3 scenarios side-by-side. Shared cost parameters (average wage and max schedule) apply to all scenarios so the dollar figures stay comparable. Enter code lines and settings for each scenario, then click **Calculate** on each card to see results in the comparison charts and table.
+Expand **Maintenance and TCO** in the sidebar:
+
+- **Annual maintenance rate**: share of the build cost spent on maintenance each year (default 20%)
+- **Maintenance years**: years to project (default 3; set 0 to show the build cost only)
+
+Maintenance escalates 5% a year. The total cost of ownership is the build cost plus maintenance in today's dollars (discounted at 5% a year); the nominal total is shown beside it.
 
 ---
 
-## Export & Sharing
+## Understanding the result
 
-The **Export** tab provides:
+### The headline block
 
-- **PDF Report**: A branded, client-ready PDF with the headline estimate, key charts, assumptions table, and methodology notes
-- **Shareable URL**: Generates a link with pre-filled Manual Entry parameters that you can send to colleagues
-- **CSV Export**: Download results as a spreadsheet-ready file
-- **JSON Export**: Download results in JSON format for programmatic use
+The estimated cost with its range on a scale from $0, a status line (*Within plan*, *Compressed schedule*, *Not feasible with this team cap*), three tiles (schedule, team, total cost of ownership or effort) each with its reference and basis, and a scope line listing what the number is based on.
 
-Note: Shareable URLs only work with Manual Entry parameters.
+### What plan should I choose?
+
+A planner directly under the headline block. Three optional facts (people available 1 to 8, deadline 1 to 60 months, budget in USD) drive up to five plan cards: with your team, for your deadline, within your budget, cheapest, fastest practical. Each card shows cost, months, FTE, the caps that produce it, a status word and the rush premium, with **Apply** (sets the sidebar caps; Undo offered) and **Save as scenario**. A staffing curve shows the fastest practical months and the natural schedule for one to eight people, the 75% practical floor, and where coordination overhead starts (six people). Unmet deadlines and budgets are explained: nearest achievable date and team, or the share of scope that would fit and the reuse or tooling change that would save the difference. The plan page of the PDF carries the same table, curve and advice. Planner facts travel in share links.
+
+### Sections
+
+- **How is the cost built?** Waterfall from base effort through each factor to the final figure; labelled; sums exactly to the estimate.
+- **What if the deadline moves?** Cost at each schedule cap from 3 to 60 months; your cap is the diamond; shaded caps carry a compression premium; hollow points exceed your team cap.
+- **Which choices matter most?** The waterfall's factors ranked by dollars.
+- **What is the code made of?** Lines by language; grey bars are not billed.
+- **How sensitive is the estimate?** Cost across team experience and complexity.
+- **What does it cost to keep running?** Build, maintenance (nominal and today's dollars), total cost of ownership, and ownership cost at other maintenance rates.
+- **Assumptions and data** Every input and result, plus a plain-text report.
+
+Each chart card can be expanded to full screen. When the headline block scrolls out of view, a summary strip at the bottom keeps the cost, schedule and a PDF button in reach.
+
+---
+
+## Scenarios
+
+**Save as scenario** under the headline pins the current estimate (inputs, language mix, advanced drivers and maintenance settings) to the **Scenarios** page. Up to three. Each scenario's inputs can be edited in place; a single developer-year cost is shared so the dollars stay comparable. The page shows aligned charts (cost with range, schedule, team) and a side-by-side table with the cost difference against Scenario 1.
+
+---
+
+## Sharing and export
+
+Under the headline block:
+
+- **Download PDF report**: a client-ready PDF with the headline estimate, charts, assumptions, cost steps and methodology.
+- **Copy link**: the address bar always holds a link that reopens the exact estimate (repository scans are shared as their line counts).
+- **CSV**: language table, cost steps and results.
+- **JSON**: inputs, estimate and cost steps for programmatic use.
+
+---
+
+## Accessibility
+
+The app works with a keyboard alone (a *Skip to main content* link is the first tab stop), respects reduced-motion settings, offers light and dark modes, and never signals status by colour alone.

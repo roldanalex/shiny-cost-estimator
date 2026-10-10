@@ -69,7 +69,7 @@ How the pieces are wired:
   message instead of the download button if the CLI is missing.
 - Rendering happens in a copy of `report/` under `tempdir()` because the
   deployed app directory is not reliably writable.
-- Inter fonts are bundled in `report/fonts/` (`font-paths` in the qmd) because
+- Source Sans 3 and Source Serif 4 are bundled in `report/fonts/` (`font-paths` in the qmd) because
   Google Fonts cannot be fetched at render time server-side.
 - First render takes ~5-15 s; a progress bar covers it.
 
