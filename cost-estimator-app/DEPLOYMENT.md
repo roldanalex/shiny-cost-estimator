@@ -1,4 +1,4 @@
-# Deployment Guide for Shiny Cost Estimator
+# Deployment Guide for Software Cost Estimator
 
 ## 📦 Deployment Options
 

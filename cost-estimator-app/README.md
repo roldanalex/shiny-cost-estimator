@@ -1,6 +1,6 @@
-# Shiny Cost Estimator: Interactive App
+# Software Cost Estimator: Interactive App
 
-A client-facing R Shiny application that estimates the development cost, schedule, team size and total cost of ownership of software projects with a calibrated **COCOMO II.2000** model, and produces a **PDF report** your users can forward.
+A client-facing R Shiny application that estimates the development cost, schedule, team size and total cost of ownership of **any software project, in any language**, with a calibrated **COCOMO II.2000** model, and produces a **PDF report** your users can forward. It began as the Shiny Cost Estimator for R Shiny and data-science teams; the engine was always language-agnostic.
 
 **Version 2.2.0** · Light and dark themes · Self-hosted Source Sans 3 / Source Serif 4 · Quarto + Typst PDF reports · shinyapps.io-ready
 
@@ -51,13 +51,15 @@ Two pages and a Help menu:
 
 A summary strip appears at the bottom only while the headline block is scrolled out of view.
 
+**Kind of code.** *Modern framework or high-level language* applies the documented 0.85 calibration (default); *Systems, embedded or legacy code* keeps the published COCOMO II constant. The engine argument is `framework = "modern" | "systems"`; the waterfall shows the step as "Framework calibration".
+
 **Inputs.** Reuse, tooling and the five COCOMO drivers are named rating levels mapped to the published multipliers (`RATING_LEVELS` in `modules/app_helpers.R`). Every input has a real label and a help popover.
 
 **Share links.** The address bar always holds a link that reopens the exact estimate (every line count and parameter, bounds-checked on the way back in). Repository scans share as their line counts.
 
 ### Input sources
 
-- **Manual**: type line counts per language
+- **Manual**: pick languages from a list (21 weighted languages plus Other) and type line counts per language
 - **ZIP**: upload a repository ZIP (max 50 MB), extracted in an isolated temp directory with path-traversal validation
 - **Folder**: scan a project directory (hidden on deployed servers)
 

@@ -1,5 +1,14 @@
 ## v2.2.0 - October 2026
 
+### Any software project, in any language
+
+- **New name: Software Cost Estimator.** The engine was always language-agnostic; the name now says so. The repository and the app URL are unchanged.
+- **Pick your languages.** Manual entry is a language list (R, Python, JavaScript, TypeScript, SQL, HTML, CSS, Sass, Java, C#, Go, Rust, C, C++, Kotlin, Swift, Scala, Ruby, PHP, Julia, Shell, Other) with a line-count box per language. The scanner recognises all of them. Share links carry the whole mix (`langs=R:18000,Go:2000`); links from v2.1 still open.
+- **Productivity weights** are documented (README): TypeScript 0.9 like JavaScript; Ruby, PHP and Julia 1.1 like Python; Go, Rust, C#, Kotlin, Swift, Scala, Java, C and C++ at 1.0 like R. Existing weights are unchanged, so every existing estimate is unchanged.
+- **What kind of code?** A new choice under *The project*: *Modern framework or high-level language* keeps the documented 0.85 calibration (the default, so nothing moves for existing estimates); *Systems, embedded or legacy code* removes it and uses the published COCOMO II constant. The waterfall step is labelled "Framework calibration"; the PDF assumptions table and the share link (`fw=`) record the choice. Engine argument: `framework`.
+- Help text, the first-run screen, the user guide, the manual and the onboarding page no longer assume an R Shiny project.
+- Every output the tool produces (PDF cover and closing line, CSV, JSON, the plain-text report) now carries a credit line: "Software Cost Estimator v2.2.0, developed by Alexis Roldan" with a link to the source.
+
 ### Plan advisor: "What plan should I choose?"
 
 - A new section under the headline block answers the inverse question: given what you know (people available, a deadline, a budget, or nothing), which team and schedule should you choose? The planner prices every team size from 1 to 8 against every schedule cap through the same engine, so each card is an exact engine call: **Apply** sets the caps in the sidebar and the headline reproduces the card to the dollar (Undo offered); **Save as scenario** pins it.

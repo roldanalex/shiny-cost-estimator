@@ -1,6 +1,6 @@
 ## Overview
 
-The Shiny Cost Estimator uses the **COCOMO II** (Constructive Cost Model) methodology to estimate the cost, schedule, team size and budget required for software projects. It analyses your codebase or accepts manual line counts, then applies the published parametric model to produce an estimate with an honest range.
+The Software Cost Estimator uses the **COCOMO II** (Constructive Cost Model) methodology to estimate the cost, schedule, team size and budget required for any software project, in any language. It analyses your codebase or accepts manual line counts, then applies the published parametric model to produce an estimate with an honest range.
 
 **What it estimates:**
 
@@ -17,7 +17,7 @@ The selector at the top of the sidebar picks one of three sources.
 
 ### Manual
 
-Type line counts per language (R, Python, JavaScript, SQL, CSS, Other). Choose **Run estimate**.
+Pick the languages from the **Languages** list (R, Python, JavaScript, TypeScript, SQL, HTML, CSS, Sass, Java, C#, Go, Rust, C, C++, Kotlin, Swift, Scala, Ruby, PHP, Julia, Shell, or Other for anything unlisted). A line-count box appears for each one; counts you typed are kept if you remove and re-add a language. Choose **Run estimate**.
 
 ### ZIP
 
@@ -27,7 +27,7 @@ Upload a `.zip` of the repository (max 50 MB). Files are extracted in an isolate
 
 Only available when the app runs on your own computer. Enter or browse to the repository path and choose **Run estimate**.
 
-Documentation and configuration files (Markdown, JSON, YAML, SVG, …) are shown in the results but never counted toward the cost.
+Documentation and configuration files (Markdown, JSON, YAML, SVG, …) are shown in the results but never counted toward the cost. Each language carries a productivity weight relative to R (for example SQL 1.3, Python 1.1, JavaScript 0.9); unlisted languages count at 1.0. The full table is in the README.
 
 > **Live recalculation.** Only the source inputs need *Run estimate*. Every parameter below recalculates the estimate the moment it changes.
 
@@ -37,6 +37,7 @@ Documentation and configuration files (Markdown, JSON, YAML, SVG, …) are shown
 
 | Input | Choices | Default | What it controls |
 |---|---|---|---|
+| What kind of code? | Modern framework or high-level language / Systems, embedded or legacy code | Modern framework | Whether the documented 0.85 modern-framework calibration applies; systems code keeps the published COCOMO II constant |
 | Complexity | Low / Medium / High | Medium | Architectural complexity; drives the size exponent |
 | Team experience | 1 (Novice) to 5 (Expert) | 4 (Proficient) | Average team skill |
 | Code reuse | Very high reuse … None | Typical (1.00) | How much existing code can be leaned on |

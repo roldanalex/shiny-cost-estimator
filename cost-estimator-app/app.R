@@ -1,4 +1,5 @@
-# Shiny Cost Estimator - client-facing COCOMO II cost, schedule and TCO estimator
+# Software Cost Estimator - client-facing COCOMO II cost, schedule and TCO
+# estimator for any software project (built for R Shiny and data-science teams first)
 # Author: Alexis Roldan
 #
 # Interaction model: line counts, ZIP uploads and folder scans need "Run
@@ -17,7 +18,7 @@ requireNamespace("ragg", quietly = TRUE)
 requireNamespace("knitr", quietly = TRUE)
 
 APP_VERSION  <- "2.2.0"
-APP_NAME     <- "Shiny Cost Estimator"
+APP_NAME     <- "Software Cost Estimator"
 APP_OWNER    <- "Alexis Roldan"
 APP_REPO_URL <- "https://github.com/roldanalex/shiny-app-valuation"
 
@@ -56,13 +57,20 @@ help_content <- list(
   complexity = list(
     title = "Complexity",
     body = tagList(
-      p("How architecturally involved the project is."),
+      p("How architecturally involved the project is, whatever the language."),
       tags$ul(
-        tags$li(tags$b("Low:"), " one or two screens, basic forms, straightforward logic."),
+        tags$li(tags$b("Low:"), " a small tool or service: a few screens or endpoints, basic forms, straightforward logic."),
         tags$li(tags$b("Medium:"), " several interconnected features, moderate data processing, some integrations."),
-        tags$li(tags$b("High:"), " complex architecture, AI/ML parts, real-time data or many interacting modules.")
+        tags$li(tags$b("High:"), " complex architecture, AI/ML parts, real-time or distributed processing, many interacting modules.")
       ),
       p("When in doubt, choose Medium. Higher complexity grows effort exponentially with size.")
+    )
+  ),
+  framework = list(
+    title = "What kind of code?",
+    body = tagList(
+      p("COCOMO II was calibrated on systems and enterprise code. This tool applies a documented 0.85 calibration for projects built on modern frameworks and high-level languages (R, Python, JavaScript, web and data stacks), where a line of code does more."),
+      p("Choose ", tags$b("Systems, embedded or legacy code"), " for C, C++, Java, firmware or large legacy systems: the discount is removed and the published constant applies. The waterfall shows this step as 'Framework calibration'.")
     )
   ),
   team = list(
@@ -98,7 +106,7 @@ help_content <- list(
     title = "Cost per developer-year",
     body = tagList(
       p("The fully loaded annual cost of one developer in US dollars (salary plus benefits and overhead). It converts person-months of effort into money."),
-      p("If you only know base salary, $105,000 is a reasonable US average for data science and software roles. Doubling the wage doubles the estimate.")
+      p("If you only know base salary, $105,000 is a reasonable US average for software and data roles. Doubling the wage doubles the estimate.")
     )
   ),
   maxteam = list(
@@ -200,16 +208,13 @@ source_inputs <- function() {
     conditionalPanel(
       condition = "input.input_method == 'manual'",
       tags$p(class = "sidebar-group-sub mt-2",
-             "Lines of code by language. Rough counts are fine; refine later."),
-      tags$div(
-        class = "counts-grid",
-        numericInput("manual_r",      "R",          value = EXAMPLE_MIX$R, min = 0, step = 100),
-        numericInput("manual_python", "Python",     value = 0, min = 0, step = 100),
-        numericInput("manual_js",     "JavaScript", value = 0, min = 0, step = 100),
-        numericInput("manual_sql",    "SQL",        value = 0, min = 0, step = 100),
-        numericInput("manual_css",    "CSS",        value = 0, min = 0, step = 100),
-        numericInput("manual_other",  "Other",      value = 0, min = 0, step = 100)
-      ),
+             "Pick the languages, then type rough line counts. A guess is fine; refine later."),
+      tags$div(class = "field",
+        tags$label(class = "field-label", `for` = "manual_langs", "Languages"),
+        selectizeInput("manual_langs", label = NULL, choices = MANUAL_LANGUAGES, selected = "R",
+                       multiple = TRUE, width = "100%",
+                       options = list(plugins = list("remove_button"), placeholder = "Add a language"))),
+      uiOutput("manual_counts"),
       uiOutput("manual_error")
     ),
 
@@ -247,6 +252,13 @@ project_inputs <- function(prefix = "analyze") {
                     selected = PARAM_DEFAULTS$complexity, width = "100%"),
         label = "Complexity", input_id = paste0(prefix, "_complexity"),
         help_title = help_content$complexity$title, help_body = help_content$complexity$body
+      ),
+      field_with_help(
+        tags$div(class = "rating-group",
+          radioButtons(paste0(prefix, "_framework"), label = NULL, choices = FRAMEWORK_CHOICES,
+                       selected = PARAM_DEFAULTS$framework, width = "100%")),
+        label = "What kind of code?", input_id = paste0(prefix, "_framework"),
+        help_title = help_content$framework$title, help_body = help_content$framework$body
       ),
       field_with_help(
         tagList(
@@ -366,7 +378,7 @@ ui <- page_navbar(
       tags$meta(name = "viewport", content = "width=device-width, initial-scale=1"),
       tags$meta(name = "theme-color", content = app_palettes$light$primary),
       tags$meta(name = "description",
-                content = "COCOMO II cost, schedule, team and total-cost-of-ownership estimates for software projects."),
+                content = "COCOMO II cost, schedule, team and total-cost-of-ownership estimates for any software project."),
       tags$link(rel = "icon", type = "image/svg+xml", href = "favicon.svg"),
       tags$link(rel = "stylesheet", href = "fonts.css"),
       tags$style(HTML(css_root_vars())),
@@ -376,7 +388,7 @@ ui <- page_navbar(
     skip_link("#main")
   ),
   footer = app_footer(APP_VERSION, APP_OWNER,
-                      support_url = paste0(APP_REPO_URL, "/issues")),
+                      support_url = paste0(APP_REPO_URL, "/issues"), name = APP_NAME),
 
   # ── Estimate ───────────────────────────────────────────────────────────────
   nav_panel(
@@ -486,9 +498,41 @@ server <- function(input, output, session) {
       pcon              = num_or(input$analyze_pcon, PARAM_DEFAULTS$pcon),
       apex              = num_or(input$analyze_apex, PARAM_DEFAULTS$apex),
       maintenance_rate  = num_or(input$analyze_maint_rate, PARAM_DEFAULTS$maintenance_rate * 100) / 100,
-      maintenance_years = num_or(input$analyze_maint_years, PARAM_DEFAULTS$maintenance_years)
+      maintenance_years = num_or(input$analyze_maint_years, PARAM_DEFAULTS$maintenance_years),
+      framework         = if (!is.null(input$analyze_framework) && input$analyze_framework %in% c("modern", "systems"))
+                            input$analyze_framework else PARAM_DEFAULTS$framework
     )
   })
+
+  # ── Manual entry: one count box per chosen language, values kept per session ──
+  manual_store <- reactiveValues()
+  manual_id <- function(lang) paste0("manual_", lang_slug(lang))
+  output$manual_counts <- renderUI({
+    langs <- input$manual_langs
+    if (length(langs) == 0) {
+      return(tags$p(class = "field-hint", "Add at least one language above."))
+    }
+    boxes <- lapply(langs, function(lang) {
+      stored <- isolate(manual_store[[lang]])
+      val <- if (!is.null(stored)) stored else if (identical(lang, "R")) EXAMPLE_MIX$R else 0
+      numericInput(manual_id(lang), lang, value = val, min = 0, step = 100)
+    })
+    tags$div(class = "counts-grid", boxes)
+  })
+  lapply(MANUAL_LANGUAGES, function(lang) {
+    observeEvent(input[[manual_id(lang)]], {
+      manual_store[[lang]] <- input[[manual_id(lang)]]
+      errors$manual <- NULL
+    }, ignoreInit = TRUE)
+  })
+  current_manual_mix <- function() {
+    langs <- input$manual_langs
+    raw <- setNames(lapply(langs, function(lang) {
+      v <- input[[manual_id(lang)]]
+      if (is.null(v)) manual_store[[lang]] else v
+    }), langs)
+    build_language_mix(raw)
+  }
 
   # Push a parameter list (and optionally line counts) into the inputs
   apply_params <- function(p, mix = NULL) {
@@ -504,14 +548,18 @@ server <- function(input, output, session) {
     updateSliderInput(session, "analyze_max_schedule", value = p$max_schedule)
     updateSliderInput(session, "analyze_maint_rate", value = round(p$maintenance_rate * 100))
     updateSliderInput(session, "analyze_maint_years", value = p$maintenance_years)
+    updateRadioButtons(session, "analyze_framework", selected = p$framework)
     if (!is.null(mix)) {
-      m <- mix_to_manual(mix)
-      updateNumericInput(session, "manual_r",      value = m$R)
-      updateNumericInput(session, "manual_python", value = m$Python)
-      updateNumericInput(session, "manual_js",     value = m$JavaScript)
-      updateNumericInput(session, "manual_sql",    value = m$SQL)
-      updateNumericInput(session, "manual_css",    value = m$CSS)
-      updateNumericInput(session, "manual_other",  value = m$Other)
+      mix <- clean_language_mix(mix)
+      # Languages the picker does not list (from a scan or an old link) are kept
+      # under their own name; the picker gains them as choices.
+      langs <- names(mix)
+      for (lang in langs) {
+        manual_store[[lang]] <- mix[[lang]]
+        updateNumericInput(session, manual_id(lang), value = mix[[lang]])
+      }
+      updateSelectizeInput(session, "manual_langs", choices = union(MANUAL_LANGUAGES, langs),
+                           selected = langs)
       updateRadioButtons(session, "input_method", selected = "manual")
     }
   }
@@ -542,9 +590,7 @@ server <- function(input, output, session) {
   output$manual_error <- renderUI(if (!is.null(errors$manual)) field_error(errors$manual))
   output$zip_error    <- renderUI(if (!is.null(errors$zip))    field_error(errors$zip))
   output$local_error  <- renderUI(if (!is.null(errors$local))  field_error(errors$local))
-  observeEvent(list(input$manual_r, input$manual_python, input$manual_js,
-                    input$manual_sql, input$manual_css, input$manual_other),
-               errors$manual <- NULL, ignoreInit = TRUE)
+  observeEvent(input$manual_langs, errors$manual <- NULL, ignoreInit = TRUE)
   observeEvent(input$zip_file,    errors$zip   <- NULL, ignoreInit = TRUE)
   observeEvent(input$local_path,  errors$local <- NULL, ignoreInit = TRUE)
 
@@ -591,6 +637,7 @@ server <- function(input, output, session) {
           tool_support        = analyze_params()$tools,
           max_team_size       = analyze_params()$max_team,
           max_schedule_months = analyze_params()$max_schedule,
+          framework           = analyze_params()$framework,
           progress_callback   = function(current, total) {
             elapsed <- as.integer(difftime(Sys.time(), started, units = "secs"))
             setProgress(
@@ -683,16 +730,9 @@ server <- function(input, output, session) {
                               source_label = tools::file_path_sans_ext(basename(f$name)))
 
     } else {
-      language_mix <- build_language_mix(list(
-        "R"          = input$manual_r,
-        "Python"     = input$manual_python,
-        "JavaScript" = input$manual_js,
-        "SQL"        = input$manual_sql,
-        "CSS"        = input$manual_css,
-        "Other"      = input$manual_other
-      ))
+      language_mix <- current_manual_mix()
       if (length(language_mix) == 0) {
-        errors$manual <- "Enter at least one line count above zero."
+        errors$manual <- "Add a language and enter a line count above zero."
         return(invisible(NULL))
       }
       results$analyze <- list(language_mix = language_mix, source_label = "Manual entry")

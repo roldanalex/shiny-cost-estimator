@@ -28,6 +28,17 @@ build_language_mix <- function(raw_mix) {
   Filter(function(x) x > 0, cleaned)
 }
 
+# ---- Credit line for every output the tool produces -----------------------------
+APP_AUTHOR_NAME <- "Alexis Roldan"
+APP_SOURCE_URL  <- "https://github.com/roldanalex/shiny-app-valuation"
+
+#' "Software Cost Estimator v2.2.0, developed by Alexis Roldan"
+app_credit <- function(version = if (exists("APP_VERSION")) APP_VERSION else "2.2.0",
+                       name = if (exists("APP_NAME")) APP_NAME else "Software Cost Estimator",
+                       author = if (exists("APP_OWNER")) APP_OWNER else APP_AUTHOR_NAME) {
+  sprintf("%s v%s, developed by %s", name, version, author)
+}
+
 # ---- Display formatting ------------------------------------------------------
 # The engine returns exact figures; the screen and the PDF show them rounded so
 # a ±30% estimate never reads as dollar-accurate. Rounding happens here only.
@@ -93,11 +104,32 @@ PARAM_DEFAULTS <- list(
   pcon              = 1.0,
   apex              = 1.0,
   maintenance_rate  = 0.20,
-  maintenance_years = 3
+  maintenance_years = 3,
+  framework         = "modern"
 )
 
 # The worked example shown on first run (and used by "Run this example")
 EXAMPLE_MIX <- list(R = 10000)
+
+# Languages a user can enter by hand: every language the engine weights, plus
+# Other for anything unlisted (priced at 1.0). Order: most common first.
+MANUAL_LANGUAGES <- c("R", "Python", "JavaScript", "TypeScript", "SQL", "HTML", "CSS", "Sass",
+                      "Java", "C#", "Go", "Rust", "C", "C++", "Kotlin", "Swift", "Scala",
+                      "Ruby", "PHP", "Julia", "Shell", "Other")
+
+# Kind of code: drives the 0.85 modern-framework calibration in the engine
+FRAMEWORK_CHOICES <- c(
+  "Modern framework or high-level language (R, Python, JavaScript, web, data)" = "modern",
+  "Systems, embedded or legacy code (C, C++, Java, firmware)"                   = "systems"
+)
+
+#' A language id safe for Shiny input ids: "C++" -> "c_plus_plus", "C#" -> "c_sharp"
+lang_slug <- function(lang) {
+  x <- tolower(lang)
+  x <- gsub("\\+", "_plus", x)
+  x <- gsub("#", "_sharp", x)
+  gsub("[^a-z0-9]+", "_", x)
+}
 
 # COCOMO II.2000 rating levels. Values are the published effort multipliers the
 # engine already accepts; labels are what a non-specialist can answer.
@@ -185,18 +217,41 @@ team_exp_word <- function(n) {
 }
 
 # ---- Share link: every input that moves the number, both directions ------------
-SHARE_KEYS <- c(
+# v2.2 links carry the language mix as one key: langs=R:18000,Python:4000.
+# The six v2.1 keys (r, py, js, sql, css, other) still parse so old links work.
+LEGACY_SHARE_KEYS <- c(
   r = "R", py = "Python", js = "JavaScript", sql = "SQL", css = "CSS", other = "Other"
 )
 
-#' Reduce any language mix to the six manual-entry buckets (unknown languages
-#' are summed into Other) so a scan can be shared as a manual estimate.
-mix_to_manual <- function(mix) {
-  out <- setNames(as.list(rep(0, length(SHARE_KEYS))), unname(SHARE_KEYS))
+#' Clean a language mix: known names kept, counts sanitised, zeros dropped.
+#' Unknown names are kept too (they price at 1.0), so a scan of any language shares.
+clean_language_mix <- function(mix) {
+  out <- list()
   for (nm in names(mix)) {
     v <- clean_count(mix[[nm]])
-    key <- if (nm %in% unname(SHARE_KEYS)) nm else "Other"
-    out[[key]] <- out[[key]] + v
+    if (v > 0 && nzchar(nm)) out[[nm]] <- v
+  }
+  out
+}
+
+#' Encode a mix as "R:18000,Python:4000" (names URL-safe; counts as integers)
+encode_langs <- function(mix) {
+  mix <- clean_language_mix(mix)
+  if (length(mix) == 0) return("")
+  paste0(utils::URLencode(names(mix), reserved = TRUE), ":",
+         format(round(unlist(mix)), scientific = FALSE, trim = TRUE), collapse = ",")
+}
+
+#' Decode "R:18000,Python:4000" back to a bounded mix (unknown entries dropped)
+decode_langs <- function(x) {
+  if (is.null(x) || !nzchar(x)) return(list())
+  out <- list()
+  for (pair in strsplit(x, ",", fixed = TRUE)[[1]]) {
+    kv <- strsplit(pair, ":", fixed = TRUE)[[1]]
+    if (length(kv) != 2) next
+    nm <- utils::URLdecode(kv[1])
+    v  <- parse_num_param(kv[2])
+    if (!is.null(v) && v > 0 && nzchar(nm) && nchar(nm) <= 40) out[[nm]] <- v
   }
   out
 }
@@ -204,19 +259,18 @@ mix_to_manual <- function(mix) {
 #' Query string (without the leading "?") that reproduces an estimate.
 #' `know` (people, months, budget) are the optional planner facts.
 build_share_query <- function(params, mix, know = NULL) {
-  m <- mix_to_manual(mix)
   p <- utils::modifyList(PARAM_DEFAULTS, Filter(Negate(is.null), params))
   num <- function(x) format(x, scientific = FALSE, trim = TRUE)
   parts <- c(
     mode = "manual",
-    r = num(m$R), py = num(m$Python), js = num(m$JavaScript), sql = num(m$SQL),
-    css = num(m$CSS), other = num(m$Other),
+    langs = encode_langs(mix),
     complexity = p$complexity, team = num(p$team_exp),
     reuse = num(p$reuse), tools = num(p$tools), wage = num(p$wage),
     maxteam = num(p$max_team), maxsched = num(p$max_schedule),
     rely = num(p$rely), cplx = num(p$cplx), ruse = num(p$ruse),
     pcon = num(p$pcon), apex = num(p$apex),
-    mrate = num(p$maintenance_rate), myears = num(p$maintenance_years)
+    mrate = num(p$maintenance_rate), myears = num(p$maintenance_years),
+    fw = p$framework
   )
   if (!is.null(know)) {
     for (k in c("people", "months", "budget")) {
@@ -225,18 +279,23 @@ build_share_query <- function(params, mix, know = NULL) {
         parts[[c(people = "people", months = "deadline", budget = "budget")[[k]]]] <- num(v)
     }
   }
-  paste0(names(parts), "=", utils::URLencode(unname(parts), reserved = TRUE), collapse = "&")
+  # langs is already encoded; everything else is encoded here
+  enc <- vapply(names(parts), function(n) if (n == "langs") parts[[n]] else
+    utils::URLencode(unname(parts[[n]]), reserved = TRUE), character(1))
+  paste0(names(parts), "=", enc, collapse = "&")
 }
 
 #' Parse a query list back into validated inputs. Returns NULL unless
-#' mode=manual; otherwise list(mix = named list, params = partial list) with
-#' only the values that passed their bounds (rating values snap to a level).
+#' mode=manual; otherwise list(mix, params, know) with only the values that
+#' passed their bounds (rating values snap to a level).
 parse_share_query <- function(query) {
   if (is.null(query$mode) || !identical(query$mode, "manual")) return(NULL)
-  mix <- list()
-  for (k in names(SHARE_KEYS)) {
-    v <- parse_num_param(query[[k]])
-    if (!is.null(v)) mix[[SHARE_KEYS[[k]]]] <- v
+  mix <- decode_langs(query$langs)
+  if (length(mix) == 0) {
+    for (k in names(LEGACY_SHARE_KEYS)) {
+      v <- parse_num_param(query[[k]])
+      if (!is.null(v) && v > 0) mix[[LEGACY_SHARE_KEYS[[k]]]] <- v
+    }
   }
   p <- list()
   if (!is.null(query$complexity) && query$complexity %in% c("low", "medium", "high"))
@@ -251,6 +310,7 @@ parse_share_query <- function(query) {
   }
   mr <- parse_num_param(query$mrate, 0, 0.40);     if (!is.null(mr)) p$maintenance_rate <- mr
   my <- parse_num_param(query$myears, 0, 10);      if (!is.null(my)) p$maintenance_years <- round(my)
+  if (!is.null(query$fw) && query$fw %in% c("modern", "systems")) p$framework <- query$fw
   know <- list()
   kp <- parse_num_param(query$people, 1, 8);        if (!is.null(kp)) know$people <- round(kp)
   kd <- parse_num_param(query$deadline, 1, 60);     if (!is.null(kd)) know$months <- round(kd)
@@ -271,7 +331,7 @@ cost_steps <- function(e) {
     list(name = "Team experience",  val = mb$EM_experience, always = TRUE),
     list(name = "Code reuse",       val = mb$EM_reuse,      always = TRUE),
     list(name = "Tooling",          val = mb$EM_tools,      always = TRUE),
-    list(name = "Modern framework", val = mb$EM_modern,     always = TRUE),
+    list(name = "Framework calibration", val = mb$EM_modern, always = TRUE),
     list(name = "Reliability",      val = mb$EM_rely,       always = FALSE),
     list(name = "Product complexity", val = mb$EM_cplx,     always = FALSE),
     list(name = "Reusability",      val = mb$EM_ruse,       always = FALSE),

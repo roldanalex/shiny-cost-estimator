@@ -161,3 +161,31 @@ test_that("params are preserved in output", {
   expect_equal(result$params$tool_support, 0.9)
   expect_equal(result$params$discount_rate, 0.05)
 })
+
+# ---- Any software project: framework calibration and language table ----------
+
+test_that("framework = 'systems' removes exactly the 0.85 modern-framework discount", {
+  m <- estimate_shiny_cost(20000)
+  s <- estimate_shiny_cost(20000, framework = "systems")
+  expect_equal(m$multiplier_breakdown$EM_modern, 0.85)
+  expect_equal(s$multiplier_breakdown$EM_modern, 1.0)
+  expect_equal(s$unconstrained_effort_pm / m$unconstrained_effort_pm, 1 / 0.85, tolerance = 1e-3)
+  expect_equal(m$params$framework, "modern")
+  expect_equal(s$params$framework, "systems")
+  expect_error(estimate_shiny_cost(1000, framework = "quantum"))
+})
+
+test_that("language productivity table covers the supported stacks and unknowns count at 1.0", {
+  expect_equal(unname(LANGUAGE_PRODUCTIVITY["R"]), 1.0)
+  expect_equal(unname(LANGUAGE_PRODUCTIVITY["TypeScript"]), unname(LANGUAGE_PRODUCTIVITY["JavaScript"]))
+  expect_equal(unname(LANGUAGE_PRODUCTIVITY["Ruby"]), unname(LANGUAGE_PRODUCTIVITY["Python"]))
+  for (l in c("Go", "Rust", "C#", "Kotlin", "Swift", "Scala", "Java", "C", "C++"))
+    expect_equal(unname(LANGUAGE_PRODUCTIVITY[l]), 1.0, info = l)
+  expect_true(all(LANGUAGE_PRODUCTIVITY > 0.5 & LANGUAGE_PRODUCTIVITY < 1.5))
+  # an unlisted language is priced like R, never dropped
+  expect_equal(estimate_shiny_cost(5000, language_mix = list(Zig = 5000))$cost_usd,
+               estimate_shiny_cost(5000, language_mix = list(R = 5000))$cost_usd)
+  # a higher-productivity language is cheaper for the same line count
+  expect_lt(estimate_shiny_cost(5000, language_mix = list(SQL = 5000))$cost_usd,
+            estimate_shiny_cost(5000, language_mix = list(R = 5000))$cost_usd)
+})

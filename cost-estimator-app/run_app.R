@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# Quick launcher for Shiny Cost Estimator
+# Quick launcher for Software Cost Estimator
 # Usage: Rscript run_app.R [port]
 
 # Parse command line arguments
@@ -10,7 +10,7 @@ port <- if (length(args) > 0) as.integer(args[1]) else 3838
 cat("\n")
 cat("╔═══════════════════════════════════════════════════════════╗\n")
 cat("║                                                           ║\n")
-cat("║           SHINY COST ESTIMATOR                           ║\n")
+cat("║           SOFTWARE COST ESTIMATOR                        ║\n")
 cat("║        COCOMO II-Based Development Cost Analysis         ║\n")
 cat("║                                                           ║\n")
 cat("╚═══════════════════════════════════════════════════════════╝\n")
@@ -49,7 +49,7 @@ if (!file.exists("../R/shiny_cost_estimator.R") || !file.exists("../R/repo_code_
 
 # Launch app
 cat("═══════════════════════════════════════════════════════════════\n")
-cat("Starting Shiny Cost Estimator...\n")
+cat("Starting Software Cost Estimator...\n")
 cat("═══════════════════════════════════════════════════════════════\n\n")
 cat("Server will run on:  http://localhost:", port, "\n", sep = "")
 cat("Press Ctrl+C to stop\n\n")
@@ -70,6 +70,6 @@ tryCatch({
 }, interrupt = function(e) {
   cat("\n\n")
   cat("═══════════════════════════════════════════════════════════════\n")
-  cat("Server stopped. Thank you for using Shiny Cost Estimator!\n")
+  cat("Server stopped. Thank you for using Software Cost Estimator.\n")
   cat("═══════════════════════════════════════════════════════════════\n\n")
 })

@@ -1,4 +1,4 @@
-# Example Test Data for Shiny Cost Estimator
+# Example Test Data for Software Cost Estimator
 
 # This file provides sample data you can use to test the app
 # Copy these values into the Manual Entry tab
@@ -174,7 +174,7 @@ scenario_c <- list(
 # ============================================================================
 
 cat("\n═══════════════════════════════════════════════════════════════\n")
-cat("  Test Data Examples for Shiny Cost Estimator\n")
+cat("  Test Data Examples for Software Cost Estimator\n")
 cat("═══════════════════════════════════════════════════════════════\n\n")
 
 cat("Available examples:\n\n")

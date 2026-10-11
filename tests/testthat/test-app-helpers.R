@@ -103,44 +103,68 @@ test_that("every default runs through the engine unchanged", {
 
 # ---- Share link: every input that moves the number round-trips ---------------
 
-test_that("share query reproduces the full estimate, not just four inputs", {
+test_that("share query reproduces the full estimate for any language mix", {
   params <- list(complexity = "high", team_exp = 3, reuse = 0.85, tools = 0.9,
                  wage = 120000, max_team = 6, max_schedule = 12, rely = 1.10,
                  cplx = 1.17, ruse = 1.07, pcon = 1.12, apex = 0.88,
-                 maintenance_rate = 0.25, maintenance_years = 5)
-  mix <- list(R = 12000, SQL = 800, Rust = 300)   # Rust folds into Other
+                 maintenance_rate = 0.25, maintenance_years = 5, framework = "systems")
+  mix <- list(R = 12000, SQL = 800, Rust = 300, "C++" = 2500, "C#" = 100)
   q <- build_share_query(params, mix)
+  expect_match(q, "langs=R:12000,SQL:800,Rust:300,C%2B%2B:2500,C%23:100", fixed = TRUE)
+  expect_match(q, "fw=systems", fixed = TRUE)
   back <- parse_share_query(shiny::parseQueryString(paste0("?", q)))
-  expect_equal(back$mix$R, 12000)
-  expect_equal(back$mix$SQL, 800)
-  expect_equal(back$mix$Other, 300)
+  expect_equal(back$mix, mix)
   for (k in names(params)) expect_equal(back$params[[k]], params[[k]], info = k)
 
   # The two estimates must be identical to the dollar
-  bd_in  <- list(billable_code = 13100, language_mix = mix_to_manual(mix))
-  e_in   <- estimate_shiny_cost(13100, complexity = "high", team_experience = 3,
-                                reuse_factor = 0.85, tool_support = 0.9, language_mix = bd_in$language_mix,
-                                avg_wage = 120000, max_team_size = 6, max_schedule_months = 12,
-                                rely = 1.10, cplx = 1.17, ruse = 1.07, pcon = 1.12, apex = 0.88,
-                                maintenance_rate = 0.25, maintenance_years = 5)
+  e_in  <- estimate_shiny_cost(sum(unlist(mix)), complexity = "high", team_experience = 3,
+                               reuse_factor = 0.85, tool_support = 0.9, language_mix = mix,
+                               avg_wage = 120000, max_team_size = 6, max_schedule_months = 12,
+                               rely = 1.10, cplx = 1.17, ruse = 1.07, pcon = 1.12, apex = 0.88,
+                               maintenance_rate = 0.25, maintenance_years = 5, framework = "systems")
   p <- back$params
   e_out <- estimate_shiny_cost(sum(unlist(back$mix)), complexity = p$complexity,
                                team_experience = p$team_exp, reuse_factor = p$reuse,
-                               tool_support = p$tools, language_mix = Filter(function(x) x > 0, back$mix),
+                               tool_support = p$tools, language_mix = back$mix,
                                avg_wage = p$wage, max_team_size = p$max_team,
                                max_schedule_months = p$max_schedule, rely = p$rely, cplx = p$cplx,
                                ruse = p$ruse, pcon = p$pcon, apex = p$apex,
                                maintenance_rate = p$maintenance_rate,
-                               maintenance_years = p$maintenance_years)
+                               maintenance_years = p$maintenance_years, framework = p$framework)
   expect_equal(e_out$cost_usd, e_in$cost_usd)
   expect_equal(e_out$maintenance$tco, e_in$maintenance$tco)
 })
 
+test_that("v2.1 share links with the six language keys still open", {
+  back <- parse_share_query(list(mode = "manual", r = "15000", js = "3000", other = "250",
+                                 complexity = "low", team = "5"))
+  expect_equal(back$mix, list(R = 15000, JavaScript = 3000, Other = 250))
+  expect_equal(back$params$complexity, "low")
+  expect_null(back$params$framework)   # absent in old links: the app keeps its default
+  # langs= wins when both forms are present
+  both <- parse_share_query(list(mode = "manual", langs = "Go:500", r = "15000"))
+  expect_equal(both$mix, list(Go = 500))
+})
+
+test_that("language helpers are safe for ids and hostile input", {
+  expect_equal(lang_slug("C++"), "c_plus_plus")
+  expect_equal(lang_slug("C#"), "c_sharp")
+  expect_equal(lang_slug("Plain Text"), "plain_text")
+  hostile <- setNames(list("abc", -5, 10, 7), c("R", "Go", "Rust", ""))
+  expect_equal(clean_language_mix(hostile), list(Rust = 10))
+  expect_equal(decode_langs("R:100,bad,Go:-3,Zig:1e12,Py%20thon:5"), list(R = 100, "Py thon" = 5))
+  expect_equal(decode_langs(""), list())
+  expect_true(all(c("R", "Python", "Go", "Rust", "C#", "Other") %in% MANUAL_LANGUAGES))
+  expect_equal(unname(FRAMEWORK_CHOICES), c("modern", "systems"))
+  expect_equal(PARAM_DEFAULTS$framework, "modern")
+})
+
 test_that("share query ignores hostile or out-of-range values", {
-  q <- list(mode = "manual", r = "1e12", py = "-5", js = "abc", wage = "1",
+  q <- list(mode = "manual", r = "1e12", py = "-5", js = "abc", wage = "1", fw = "quantum",
             maxteam = "99", team = "7", reuse = "9", complexity = "ultra", myears = "40")
   back <- parse_share_query(q)
   expect_null(back$mix$R); expect_null(back$mix$Python); expect_null(back$mix$JavaScript)
+  expect_null(back$params$framework)
   expect_null(back$params$wage); expect_null(back$params$max_team)
   expect_null(back$params$team_exp); expect_null(back$params$complexity)
   expect_null(back$params$maintenance_years)

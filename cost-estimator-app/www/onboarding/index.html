@@ -388,14 +388,14 @@ code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em;fon
 <script id="onboarding-data" type="application/json">
 {
   "meta": {
-    "app": "Shiny Cost Estimator",
-    "what": "Cost, schedule, team and total cost of ownership for software projects · v2.2.0 · open source (MIT)",
+    "app": "Software Cost Estimator",
+    "what": "Cost, schedule, team and total cost of ownership for any software project, in any language · v2.2.0 · open source (MIT)",
     "storage_key": "shiny-cost-estimator-onboarding",
     "favicon": "assets/favicon.svg",
     "brand": {
       "org": "Alexis Roldan",
       "logo_src": "assets/favicon.svg",
-      "powered_by": "Shiny Cost Estimator",
+      "powered_by": "Software Cost Estimator",
       "powered_by_accent": "Estimator"
     },
     "theme": {
@@ -417,7 +417,7 @@ code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em;fon
       "accent_soft",
       "secondary_tint"
     ],
-    "subtitle": "Describe a software project, or let the app count its code, and get the development cost, timeline, team size and total cost of ownership from the COCOMO II model, with a PDF you can forward. No technical background needed.",
+    "subtitle": "Describe any software project, in any language, or let the app count its code, and get the development cost, timeline, team size and total cost of ownership from the COCOMO II model, with a PDF you can forward. No technical background needed.",
     "app_url": "https://alexis-roldan-ds.shinyapps.io/shiny-cost-estimator/",
     "owner": "Alexis Roldan · independent data scientist",
     "last_reviewed": "2026-10-09",
@@ -437,7 +437,7 @@ code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em;fon
         "kicker": "THE PROBLEM",
         "nav_label": "The problem",
         "headline": "The gut number nobody can defend.",
-        "intro": "Someone asks what an application would cost to build, or rebuild, or keep running. The answer is usually a round number from memory, a spreadsheet that drifts, or a generic calculator that has never heard of a codebase with R, Python and SQL in it.",
+        "intro": "Someone asks what an application would cost to build, or rebuild, or keep running. The answer is usually a round number from memory, a spreadsheet that drifts, or a generic calculator that has never seen a codebase with three languages in it.",
         "blocks": [
           {
             "type": "principles",
@@ -534,15 +534,15 @@ code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em;fon
             "items": [
               {
                 "category": "COUNT",
-                "badge": "docs never billed",
+                "badge": "21 languages, docs never billed",
                 "title": "Count and weight the code",
-                "text": "Languages are detected and weighted for productivity. Documentation and configuration files are shown but never counted toward the cost."
+                "text": "Twenty-one languages are detected and weighted for productivity (SQL 1.3, Python 1.1, JavaScript 0.9, most others 1.0); anything else counts under Other. Documentation and configuration files are shown but never counted toward the cost."
               },
               {
                 "category": "MODEL",
                 "badge": "COCOMO II.2000",
                 "title": "Effort from size and complexity",
-                "text": "Effort grows faster than size: a high-complexity project of the same length costs more than a simple one."
+                "text": "Effort grows faster than size: a high-complexity project of the same length costs more than a simple one. Say whether it is modern-framework code (0.85 calibration) or systems and legacy code (published constant)."
               },
               {
                 "category": "PEOPLE",
@@ -766,11 +766,11 @@ code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em;fon
             "items": [
               {
                 "title": "Keep Manual selected under 'Where is the code?'",
-                "text": "Type roughly how many lines of code the project has, split by language. If you only know a total, put it all in one language."
+                "text": "Pick the languages from the list and type roughly how many lines of code each has. Anything not listed goes under Other. If you only know a total, put it all in one language."
               },
               {
-                "title": "Set the three inputs that matter most",
-                "text": "Complexity (when in doubt, Medium), Team experience (1 novice to 5 expert) and Cost per developer-year (the fully loaded yearly cost of one developer, salary plus benefits and overhead)."
+                "title": "Say what kind of code it is, then set the three inputs that matter most",
+                "text": "Modern framework or high-level language (web, data, scripting) keeps the documented 0.85 calibration; systems, embedded or legacy code (C, C++, Java, firmware) uses the published COCOMO II constant. Then Complexity (when in doubt, Medium), Team experience (1 novice to 5 expert) and Cost per developer-year (the fully loaded yearly cost of one developer)."
               },
               {
                 "title": "Choose Run estimate",
@@ -916,6 +916,10 @@ code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em;fon
                     "type": "steps",
                     "items": [
                       {
+                        "title": "What kind of code?",
+                        "text": "Modern framework or high-level language applies the 0.85 calibration this tool documents for R, Python, JavaScript, web and data stacks. Systems, embedded or legacy code removes it. The waterfall shows the step as 'Framework calibration'."
+                      },
+                      {
                         "title": "Complexity",
                         "text": "Low: one or two screens and simple logic. Medium: several interconnected features. High: complex architecture, AI parts, real-time data. Effort grows exponentially with size at higher complexity."
                       },
@@ -996,7 +1000,7 @@ code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em;fon
       "code-sources": {
         "kicker": "REAL CODE",
         "title": "Bringing in real code",
-        "intro": "When you do not know the line counts, let the app count them. Languages are detected automatically, and documentation or configuration files are shown but never billed.",
+        "intro": "When you do not know the line counts, let the app count them. Twenty-one languages are detected automatically (R, Python, JavaScript, TypeScript, SQL, HTML, CSS, Sass, Java, C#, Go, Rust, C, C++, Kotlin, Swift, Scala, Ruby, PHP, Julia, Shell), and documentation or configuration files are shown but never billed.",
         "minutes": 2,
         "blocks": [
           {
@@ -1195,6 +1199,10 @@ code{background:var(--code);padding:2px 7px;border-radius:5px;font-size:.9em;fon
               {
                 "title": "Where does the model come from?",
                 "text": "COCOMO II.2000 (Boehm et al.), with one documented calibration for modern frameworks. Constants and formulas are listed on the methodology page and in the README."
+              },
+              {
+                "title": "Does it only work for R Shiny apps?",
+                "text": "No. The model is language-agnostic and the app counts twenty-one languages, with Other for the rest. It started as the Shiny Cost Estimator, which is why the defaults and the worked example lean toward R and data teams."
               }
             ]
           }

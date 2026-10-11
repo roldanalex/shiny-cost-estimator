@@ -1,4 +1,4 @@
-This app answers one question: **what would it cost to build (or rebuild) a software application?** Describe the project, or let the app count its code, and you get the development cost, timeline, team size and total cost of ownership, with a PDF you can forward.
+This app answers one question: **what would it cost to build (or rebuild) a software application?** It works for any language and any stack. Describe the project, or let the app count its code, and you get the development cost, timeline, team size and total cost of ownership, with a PDF you can forward.
 
 No technical background is needed. Every input has a **?** next to it with a plain-language explanation.
 
@@ -18,12 +18,13 @@ The **Help** menu in the top bar opens this guide, the parameter reference and t
 ## Your first estimate (2 minutes)
 
 1. On the **Estimate** page, keep **Manual** selected under *Where is the code?*
-2. Enter roughly how many lines of code the project has, split by language (for example R: 15,000, JavaScript: 3,000). A rough guess is fine; you can refine later.
-3. Set the three inputs that matter most:
+2. Pick the languages from the list and enter roughly how many lines of code each has (for example R: 15,000, JavaScript: 3,000, Go: 2,000). A rough guess is fine; you can refine later. Anything not listed goes under **Other**.
+3. Say **what kind of code** it is: *Modern framework or high-level language* (web, data, scripting) or *Systems, embedded or legacy code* (C, C++, Java, firmware). The second removes the modern-framework discount.
+4. Set the three inputs that matter most:
    - **Complexity**: how architecturally involved the app is (when in doubt, Medium)
    - **Team experience**: average skill of the team, 1 (novice) to 5 (expert)
    - **Cost per developer-year**: the fully loaded yearly cost of one developer
-4. Choose **Run estimate**.
+5. Choose **Run estimate**.
 
 Or choose **Run this example** on the first screen to see a worked estimate immediately.
 
@@ -36,7 +37,7 @@ Let the app count them:
 - **ZIP**: zip the project folder and upload it (up to 50 MB). Files are counted on the server and discarded.
 - **Folder** (only when the app runs on your own computer): point it at the project directory.
 
-Languages are detected automatically. Documentation and configuration files (README files, JSON, YAML, …) are shown in the results but **never counted toward the cost**. Only real code is billed.
+Twenty-one languages are detected automatically (R, Python, JavaScript, TypeScript, SQL, HTML, CSS, Sass, Java, C#, Go, Rust, C, C++, Kotlin, Swift, Scala, Ruby, PHP, Julia, Shell). Documentation and configuration files (README files, JSON, YAML, …) are shown in the results but **never counted toward the cost**. Only real code is billed.
 
 ### Reset and undo
 

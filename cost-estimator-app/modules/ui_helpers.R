@@ -239,10 +239,11 @@ skip_link <- function(target = "#main") {
   tags$a(class = "skip-link", href = target, "Skip to main content")
 }
 
-app_footer <- function(version, owner, support_url = NULL, support_label = "Help and feedback") {
+app_footer <- function(version, owner, support_url = NULL, support_label = "Help and feedback",
+                       name = "Software Cost Estimator") {
   tags$footer(
     class = "app-footer", `data-ux` = "footer", role = "contentinfo",
-    tags$span(tags$strong(paste0("Shiny Cost Estimator v", version))),
+    tags$span(tags$strong(paste0(name, " v", version))),
     tags$span(
       class = "footer-right",
       owner,

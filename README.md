@@ -2,11 +2,12 @@
   <img src="cost-estimator-app/www/favicon.svg" width="64" alt="">
 </p>
 
-<h1 align="center">Shiny Cost Estimator</h1>
+<h1 align="center">Software Cost Estimator</h1>
 
 <p align="center">
   <b>What would it cost to build this software?</b> A number, its honest range, and every assumption behind it.<br>
-  COCOMO II cost, schedule, team and total-cost-of-ownership estimates for R Shiny and data-science projects, with a PDF you can forward.
+  COCOMO II cost, schedule, team and total-cost-of-ownership estimates for any software project, in any language, with a PDF you can forward.<br>
+  <sub>Born as the Shiny Cost Estimator for R Shiny and data-science teams; now general.</sub>
 </p>
 
 <p align="center">
@@ -16,6 +17,7 @@
   <img alt="R" src="https://img.shields.io/badge/R-%E2%89%A5%204.3-276DC3?logo=r&logoColor=white">
   <img alt="tests" src="https://img.shields.io/badge/testthat-297%20assertions-1F8A4C">
   <img alt="model" src="https://img.shields.io/badge/model-COCOMO%20II.2000-566270">
+  <img alt="languages" src="https://img.shields.io/badge/languages-21%20weighted%20%2B%20any%20other-566270">
   <img alt="PDF" src="https://img.shields.io/badge/PDF-Quarto%20%2B%20Typst-566270">
   <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-B4500A"></a>
 </p>
@@ -67,7 +69,8 @@ analyze_repo_code(".", avg_wage = 105000, complexity = "medium", team_experience
 
 | | |
 |---|---|
-| **Three code sources** | Type line counts per language, upload a repository ZIP (50 MB, extracted in an isolated folder with path-traversal checks), or scan a local folder. Documentation and config files are shown but never billed. |
+| **Any language** | Pick languages from a list and type line counts, upload a repository ZIP (50 MB, extracted in an isolated folder with path-traversal checks), or scan a local folder. The scanner recognises R, Python, JavaScript, TypeScript, SQL, HTML, CSS, Sass, Java, C#, Go, Rust, C, C++, Kotlin, Swift, Scala, Ruby, PHP, Julia and Shell; anything else goes under Other. Documentation and config files are shown but never billed. |
+| **Kind of code** | One choice: *Modern framework or high-level language* (the documented 0.85 calibration, the default) or *Systems, embedded or legacy code* (the published COCOMO II constant). The waterfall shows the step as "Framework calibration". |
 | **Plan advisor** | *What plan should I choose?* Tell it what you know (people, deadline, budget, or nothing) and get exact plans: cheapest, fastest practical, with your team, for your deadline, within budget, each with Apply and Save. A staffing curve shows months by team size, the 75% practical floor and the coordination-overhead zone. Unmet targets are explained (nearest date, scope that fits, levers that close the gap). No AI: every card is an engine call. |
 | **Plain-language inputs** | Reuse, tooling and the five COCOMO drivers are named rating levels ("Excellent: IDE, CI/CD, tests, review") mapped to the published multipliers. Every input has a help popover. Reset with Undo. |
 | **Question-named sections** | *How is the cost built?* (labelled waterfall) · *What if the deadline moves?* (cost at every cap, marker at yours, shaded compression, hollow infeasible caps) · *Which choices matter most?* · *What is the code made of?* · *How sensitive is the estimate?* · *What does it cost to keep running?* · *Assumptions and data* |
@@ -94,8 +97,8 @@ flowchart LR
 
 | Step | What happens |
 |---|---|
-| **Count and weight** | Languages are detected and weighted for productivity (SQL 1.3×, JavaScript 0.9×). Markdown, JSON, YAML, SVG and similar files are listed but excluded from billable size. |
-| **Effort** | `Effort = 2.94 × KLOC^B × EM_total × 0.85`, where `B` is 1.02 / 1.10 / 1.18 for low / medium / high complexity, `EM_total` is the product of the effort multipliers, and 0.85 is a documented calibration for modern frameworks, applied once. |
+| **Count and weight** | Languages are detected and weighted for productivity (table below). Markdown, JSON, YAML, SVG and similar files are listed but excluded from billable size. |
+| **Effort** | `Effort = 2.94 × KLOC^B × EM_total × 0.85`, where `B` is 1.02 / 1.10 / 1.18 for low / medium / high complexity, `EM_total` is the product of the effort multipliers, and 0.85 is a documented calibration for modern frameworks, applied once and only when the project is declared as modern-framework code. Systems, embedded or legacy code keeps the published constant (factor 1.00). |
 | **Schedule and team** | `TDEV = 3.67 × Effort^D` with `D = 0.28 + 0.2 × (B − 0.91)`. Team = effort ÷ schedule, capped at your team cap (never above 8). |
 | **Caps and premiums** | A schedule cap below the natural schedule adds a smooth premium `ratio^1.25` (anchored to COCOMO II's SCED driver, capped at 2×). Teams of 6+ carry 10% coordination overhead. A plan that needs more people than the cap is flagged **not feasible**, never silently absorbed. |
 | **Range** | ±30% is the typical accuracy of COCOMO II for uncalibrated projects. It is called an estimate range, never a confidence interval. Figures are rounded to the nearest $1,000 above $100,000. |
@@ -103,10 +106,23 @@ flowchart LR
 
 The displayed numbers are internally consistent: effort = team × schedule, and the cost steps sum exactly to the headline. Golden-value tests freeze the engine's outputs.
 
+### Language productivity weights
+
+COCOMO II publishes no per-language factors; these are this tool's documented heuristic, relative to R = 1.0 (a higher weight means a line of that language does more, so the same line count costs less). Unlisted languages count at 1.0.
+
+| Weight | Languages |
+|---|---|
+| 1.3 | SQL, HTML |
+| 1.2 | CSS, Sass |
+| 1.1 | Python, Ruby, PHP, Julia |
+| 1.0 | R, Java, C#, Go, Rust, C, C++, Kotlin, Swift, Scala, Shell, Other |
+| 0.9 | JavaScript, TypeScript |
+
 ### Inputs
 
 | Input | Choices | Default |
 |---|---|---|
+| Kind of code | Modern framework or high-level language / Systems, embedded or legacy code | Modern framework |
 | Complexity | Low / Medium / High | Medium |
 | Team experience | 1 (novice) to 5 (expert) | 4 |
 | Code reuse | Very high reuse … None (0.70 to 1.30) | Typical (1.00) |

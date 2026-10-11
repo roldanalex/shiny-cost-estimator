@@ -21,7 +21,8 @@ analyze_repo_code <- function(
   tool_support = 1.0,
   max_team_size = 5,
   max_schedule_months = 24,
-  progress_callback = NULL
+  progress_callback = NULL,
+  framework = "modern"
 ) {
   # Language mappings by file extension
   lang_map <- list(
@@ -53,7 +54,18 @@ analyze_repo_code <- function(
     ".cpp" = "C++",
     ".h" = "C Header",
     ".java" = "Java",
-    ".sql" = "SQL"
+    ".sql" = "SQL",
+    ".go" = "Go",
+    ".rs" = "Rust",
+    ".cs" = "C#",
+    ".kt" = "Kotlin",
+    ".kts" = "Kotlin",
+    ".swift" = "Swift",
+    ".php" = "PHP",
+    ".rb" = "Ruby",
+    ".jl" = "Julia",
+    ".scala" = "Scala",
+    ".sc" = "Scala"
   )
 
   # Comment patterns by language
@@ -69,7 +81,16 @@ analyze_repo_code <- function(
     "SQL" = c("^\\s*--", "^\\s*/\\*", "^\\s*\\*"),
     "C" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*"),
     "C++" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*"),
-    "Java" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*")
+    "Java" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*"),
+    "Go" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*"),
+    "Rust" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*"),
+    "C#" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*"),
+    "Kotlin" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*"),
+    "Swift" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*"),
+    "PHP" = c("^\\s*//", "^\\s*#", "^\\s*/\\*", "^\\s*\\*"),
+    "Ruby" = c("^\\s*#"),
+    "Julia" = c("^\\s*#"),
+    "Scala" = c("^\\s*//", "^\\s*/\\*", "^\\s*\\*")
   )
 
   # Get all files recursively, excluding common non-code directories
@@ -317,7 +338,8 @@ analyze_repo_code <- function(
       language_mix = language_mix,
       avg_wage = avg_wage,
       max_team_size = max_team_size,
-      max_schedule_months = max_schedule_months
+      max_schedule_months = max_schedule_months,
+      framework = framework
     )
 
     non_billable_lines <- totals$Code - sum(billable$Code)

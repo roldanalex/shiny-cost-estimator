@@ -25,7 +25,9 @@ build_report_payload <- function(est, billable, curve, project_name,
     plan         = plan_slim,
     status       = estimate_status(est),
     colors       = app_colors,
-    app_version  = if (exists("APP_VERSION")) APP_VERSION else "2.1.0",
+    app_version  = if (exists("APP_VERSION")) APP_VERSION else "2.2.0",
+    credit       = app_credit(),
+    source_url   = APP_SOURCE_URL,
     project_name = project_name,
     generated_on = Sys.Date()
   )

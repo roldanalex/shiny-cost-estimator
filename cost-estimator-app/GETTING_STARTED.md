@@ -1,4 +1,4 @@
-# Getting Started: Shiny Cost Estimator (v2.2.0)
+# Getting Started: Software Cost Estimator (v2.2.0)
 
 A five-minute path from clone to first estimate. For full documentation see
 [README.md](README.md); for hosting see [DEPLOYMENT.md](DEPLOYMENT.md).
@@ -31,9 +31,10 @@ shiny::runApp("cost-estimator-app")
 The first screen shows a worked example. Choose **Run this example** to see a
 complete estimate, or:
 
-1. Under **Where is the code?** keep **Manual** and type line counts
-   (for example R: 15000, JavaScript: 3000, CSS: 2000).
-2. Set **Complexity**, **Team experience** and **Cost per developer-year**.
+1. Under **Where is the code?** keep **Manual**, pick the languages from the list
+   and type line counts (for example R: 15000, JavaScript: 3000, Go: 2000).
+2. Say **what kind of code** it is (modern framework, or systems and legacy code),
+   then set **Complexity**, **Team experience** and **Cost per developer-year**.
    Every input has a `?` popover explaining what it means.
 3. Choose **Run estimate**.
 

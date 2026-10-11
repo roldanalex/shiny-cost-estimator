@@ -4,7 +4,21 @@
 # Model constants follow COCOMO II.2000 (Boehm et al., "Software Cost Estimation
 # with COCOMO II", 2000): A = 2.94, C = 3.67, D = 0.28 + 0.2 * (B - 0.91).
 # A single documented calibration multiplier EM_modern = 0.85 adjusts for modern
-# high-level frameworks (net effective A ~= 2.50).
+# high-level frameworks (net effective A ~= 2.50). It applies when
+# framework = "modern" (the default); framework = "systems" keeps the published
+# A for systems, embedded or legacy code.
+
+# Language productivity factors (higher = more lines of that language per unit
+# of effort, relative to R = 1.0). COCOMO II publishes no per-language factors;
+# these are this tool's documented heuristic. Unlisted languages count at 1.0.
+# Documentation/config formats (Markdown, YAML, JSON, ...) are excluded upstream.
+LANGUAGE_PRODUCTIVITY <- c(
+  "R" = 1.0, "Python" = 1.1, "SQL" = 1.3, "JavaScript" = 0.9, "TypeScript" = 0.9,
+  "CSS" = 1.2, "Sass" = 1.2, "HTML" = 1.3,
+  "Ruby" = 1.1, "PHP" = 1.1, "Julia" = 1.1,
+  "Go" = 1.0, "Rust" = 1.0, "C#" = 1.0, "Kotlin" = 1.0, "Swift" = 1.0, "Scala" = 1.0,
+  "Java" = 1.0, "C" = 1.0, "C++" = 1.0, "C Header" = 1.0, "Shell" = 1.0
+)
 
 #' Estimate cost, schedule, and team size for a Shiny app
 #' @param code_lines Number of code lines (R + JS + CSS + Python + SQL)
@@ -24,6 +38,8 @@
 #' @param maintenance_rate Annual maintenance as fraction of build cost (default: 0.20)
 #' @param maintenance_years Number of years to project maintenance (default: 0)
 #' @param discount_rate Annual discount rate for maintenance present value (0-0.25, default: 0.05)
+#' @param framework "modern" (default) applies the 0.85 modern-framework calibration;
+#'   "systems" keeps the published COCOMO II.2000 constant for systems, embedded or legacy code
 #' @return List with cost, schedule, people, effort, constraints, estimate range, and maintenance
 estimate_shiny_cost <- function(
   code_lines,
@@ -42,11 +58,13 @@ estimate_shiny_cost <- function(
   apex = 1.0,
   maintenance_rate = 0.20,
   maintenance_years = 0,
-  discount_rate = 0.05
+  discount_rate = 0.05,
+  framework = c("modern", "systems")
 ) {
   # Input validation
   stopifnot(is.numeric(code_lines), code_lines >= 0)
   complexity <- match.arg(complexity, c("low", "medium", "high"))
+  framework <- match.arg(framework, c("modern", "systems"))
   stopifnot(is.numeric(team_experience), team_experience >= 1, team_experience <= 5)
   stopifnot(is.numeric(reuse_factor), reuse_factor >= 0.7, reuse_factor <= 1.3)
   stopifnot(is.numeric(tool_support), tool_support >= 0.8, tool_support <= 1.2)
@@ -66,24 +84,13 @@ estimate_shiny_cost <- function(
   A <- 2.94
   B <- switch(complexity, low = 1.02, medium = 1.10, high = 1.18)
 
-  # Language productivity factors (higher = more lines per unit of effort).
-  # Documentation/config formats (Markdown, YAML, JSON, ...) are excluded:
-  # they are non-billable and should not enter language_mix.
-  lang_productivity <- list(
-    "R" = 1.0,
-    "Python" = 1.1,
-    "SQL" = 1.3,
-    "JavaScript" = 0.9,
-    "CSS" = 1.2,
-    "HTML" = 1.3
-  )
-
-  # Calculate effective KLOC with language weighting
+  # Calculate effective KLOC with language weighting (LANGUAGE_PRODUCTIVITY)
   if (!is.null(language_mix)) {
     weighted_code <- 0
     for (lang in names(language_mix)) {
-      productivity <- lang_productivity[[lang]]
-      if (is.null(productivity)) productivity <- 1.0
+      productivity <- LANGUAGE_PRODUCTIVITY[lang]
+      if (is.na(productivity)) productivity <- 1.0
+      productivity <- unname(productivity)
       weighted_code <- weighted_code + (language_mix[[lang]] / productivity)
     }
     KLOC <- weighted_code / 1000
@@ -95,7 +102,7 @@ estimate_shiny_cost <- function(
   EM_experience <- 1.2 - 0.05 * team_experience  # 1.15 (novice) to 0.95 (expert)
   EM_reuse <- reuse_factor
   EM_tools <- tool_support
-  EM_modern <- 0.85  # single modern-framework calibration; see header note
+  EM_modern <- if (framework == "modern") 0.85 else 1.0  # calibration; see header note
 
   # COCOMO II cost drivers
   EM_rely <- rely
@@ -244,7 +251,8 @@ estimate_shiny_cost <- function(
       apex = apex,
       maintenance_rate = maintenance_rate,
       maintenance_years = maintenance_years,
-      discount_rate = discount_rate
+      discount_rate = discount_rate,
+      framework = framework
     )
   )
 }

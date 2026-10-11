@@ -1,9 +1,9 @@
-# Check Dependencies for Shiny Cost Estimator App
+# Check Dependencies for Software Cost Estimator App
 # Run this before deploying to ensure all packages are installed
 
 cat("\n")
 cat("═══════════════════════════════════════════════════════════════\n")
-cat("  Shiny Cost Estimator - Dependency Checker\n")
+cat("  Software Cost Estimator - Dependency Checker\n")
 cat("═══════════════════════════════════════════════════════════════\n\n")
 
 # Required packages

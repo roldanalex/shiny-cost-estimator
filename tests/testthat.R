@@ -1,4 +1,4 @@
-# Run tests for the Shiny Cost Estimator
+# Run tests for the Software Cost Estimator
 # Usage: Rscript tests/testthat.R (from project root)
 #
 # On CI (CI=true) a warning fails the run, so a drifting dependency or a
