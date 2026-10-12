@@ -143,7 +143,7 @@ cost-estimator-app/
 Rscript tests/testthat.R   # from the repository root
 ```
 
-About 300 assertions: golden values, model invariants (effort ≡ team × schedule, cost continuity, wage linearity), input validation, analyzer billable classification, helper formatting and rating levels, share-link round trip to the dollar, `cost_steps()` summing to the headline, UI-helper contracts, a `testServer` smoke test and an end-to-end PDF render.
+440 assertions: golden values, model invariants (effort ≡ team × schedule, cost continuity, wage linearity), input validation, analyzer billable classification, helper formatting and rating levels, share-link round trip to the dollar, `cost_steps()` summing to the headline, UI-helper contracts, a `testServer` smoke test and an end-to-end PDF render.
 
 ## Deployment
 

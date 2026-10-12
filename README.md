@@ -15,7 +15,7 @@
   <a href="https://alexis-roldan-ds.shinyapps.io/shiny-cost-estimator/"><img alt="live app" src="https://img.shields.io/badge/live%20app-shinyapps.io-0F4C5C?logo=posit&logoColor=white"></a>
   <img alt="version" src="https://img.shields.io/badge/version-2.2.0-0F4C5C">
   <img alt="R" src="https://img.shields.io/badge/R-%E2%89%A5%204.3-276DC3?logo=r&logoColor=white">
-  <img alt="tests" src="https://img.shields.io/badge/testthat-297%20assertions-1F8A4C">
+  <img alt="tests" src="https://img.shields.io/badge/testthat-440%20assertions-1F8A4C">
   <img alt="model" src="https://img.shields.io/badge/model-COCOMO%20II.2000-566270">
   <img alt="languages" src="https://img.shields.io/badge/languages-21%20weighted%20%2B%20any%20other-566270">
   <img alt="PDF" src="https://img.shields.io/badge/PDF-Quarto%20%2B%20Typst-566270">
@@ -203,7 +203,7 @@ shiny-app-valuation/
 Rscript tests/testthat.R
 ```
 
-297 assertions across 9 files: golden-value regressions; model invariants (effort = team × schedule, cost continuity at the schedule cap, exact wage linearity); input validation; analyzer billable classification; display rounding and rating levels; the share-link round trip (identical estimate to the dollar); `cost_steps()` summing exactly to the headline; UI-helper contracts (a KPI needs a reference and n, a state panel needs a reason); a `testServer` smoke test; an end-to-end PDF render; engine/module drift detection. On CI a warning fails the build.
+440 assertions across 9 files: golden-value regressions; model invariants (effort = team × schedule, cost continuity at the schedule cap, exact wage linearity); input validation; the framework calibration and language weights; analyzer billable classification across 21 languages; display rounding and rating levels; the share-link round trip (identical estimate to the dollar); `cost_steps()` summing exactly to the headline; UI-helper contracts (a KPI needs a reference and n, a state panel needs a reason); a `testServer` smoke test; an end-to-end PDF render; engine/module drift detection. On CI a warning fails the build.
 
 The workflow also runs quality gates before the tests: colours only in `theme.R`, no font CDN, no global assignment, no emoji in UI code, engine copies in sync with `R/`, the onboarding page in sync with its JSON, and one version across `app.R`, the release notes and the README badge. A final step starts the app and checks that it serves the estimate page and the onboarding page.
 

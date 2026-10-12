@@ -100,10 +100,10 @@
               },
               {
                 "label": "TESTS",
-                "value": "297",
+                "value": "440",
                 "unit": "assertions",
                 "text": "lock the engine, the formatting, the share link and the one cost decomposition every chart reads",
-                "source": "tests/testthat, v2.1.0, October 2026"
+                "source": "tests/testthat, v2.2.0, October 2026"
               }
             ]
           },
@@ -202,7 +202,7 @@
               {
                 "kicker": "01 · THE MODEL",
                 "title": "Computes every figure",
-                "text": "The engine is published COCOMO II with documented calibration; 297 tests lock it.",
+                "text": "The engine is published COCOMO II with documented calibration; 440 tests lock it.",
                 "bullets": [
                   "Effort = team × schedule, always",
                   "Waterfall sums to the headline",
